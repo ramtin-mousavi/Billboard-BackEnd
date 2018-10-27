@@ -160,33 +160,9 @@ class Gift_Model (myDB.Model):
     def id_query (ID):
         return Gift_Model.query.get (ID)
 
+    #####date = myDB.Column(myDB.DateTime, default = datetime.now)
 
 
-class Gift_History_Model (myDB.Model):
-
-    id = myDB.Column(myDB.Integer, primary_key = True)
-    user_id = myDB.Column(myDB.Integer, nullable = False)
-    gift_id = myDB.Column(myDB.Integer, nullable = False)
-    date = myDB.Column(myDB.DateTime, default = datetime.now)
-    description = myDB.Column(myDB.Text, nullable=False)
-    code = myDB.Column(myDB.Integer)
-
-
-    def __init__(self, user_id , giftId ):
-        self.user_id = user_id
-        self.gift_id = giftId
-        self.description = Gift_Model.query.get (giftId).description
-        self.code = Gift_Model.query.get (giftId).code
-
-
-    def add_and_commit(self):
-        myDB.session.add (self)
-        myDB.session.commit()
-
-
-    @staticmethod
-    def paginate_query(per, num, error, user_id):
-        return Gift_History_Model.query.filter_by(user_id = user_id).paginate(per_page=per, page=num, error_out=error)
 
 
 
@@ -252,4 +228,3 @@ class Item_Model (myDB.Model):
     def add_and_commit (self):
         myDB.session.add (self)
         myDB.session.commit()
-        

@@ -27,18 +27,5 @@ class Register_Form (Form):
 class Login_Form (Form):
 
     username = StringField ('Enter Username' , [validators.Length (min=4 , max = 25)])
-
     password = PasswordField ('Enter Password' , [
         validators.DataRequired()])
-
-
-
-class Submit_Form (Form):
-
-    company = StringField ('Company' , [validators.Length (min=3 , max = 50)])
-    email = StringField ('Email',[validators.Length (min=8 , max = 50) ,validators.Email("لطفا ايميل خود را به درستي وارد کنيد")])
-    phone = StringField ('Phone' , [validators.Length (min=3 , max = 30)])
-    name = StringField ('Name' , [validators.Length (min=3 , max = 50)])
-    download_link  = StringField ('Download Link' )
-    deepLink = StringField ('Deep Link' )
-    iconLink = StringField ('Icon Link' )
