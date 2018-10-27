@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Profile Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='profile.css') }}" />
+</head>
+<script>
+  function hide() {
+    document.getElementById("rightPanel").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+  }
+
+  function show() {
+    document.getElementById("rightPanel").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+  }
+  
+  function checkInstall(id) {
+	$(document).ready(function() {
+	   var appId = id;
+	   var qurl="http://192.168.1.108:5000/addcredit";
+	   
+	   $.ajax({
+				type: "POST",
+				cache: false,
+				data:{app_id:appId},
+				url: qurl,
+				dataType: "json",
+				success: function(data) { 
+					console.log(data);                    
+				},
+				error: function(jqXHR) {
+					alert("error: " + jqXHR.status);
+					console.log(jqXHR);
+				}
+			})
+	});
+ 
+}
+
+  function addHistory(id) {
+	$(document).ready(function() {
+	   var appId = id;
+	   var qurl="http://192.168.1.108:5000/addhistory";
+	   $.ajax({
+				type: "POST",
+				cache: false,
+				data:{app_id:appId},
+				url: qurl,
+				dataType: "json",
+				success: function(data) { 
+					console.log(data);                    
+				},
+				error: function(jqXHR) {
+					alert("error: " + jqXHR.status);
+					console.log(jqXHR);
+				}
+			})
+	});
+ 
+}
+
+
+
+</script>
+
+<body>
+  <!-- Profile Panel  -->
+  <div class="w3-sidebar w3-light-gray text-center w3-bar-block w3-collapse" id="rightPanel">
+    <button class="w3-bar-item w3-button w3-hide-large" onclick="hide()">Close &times;</button>
+    <h3>پروفایل کاربری</h3>
+    <div class="w3-card">
+      <img class="w3-round" src="{{ url_for('static',filename='avatar.png') }}" style="width:40%;" />
+      <h4>{{user.name}}</h4>
+      <h4>اعتبار: {{user.credit}}</h4>
+      <a href="{{url_for ('giftHistoryHandler' , pageNum = 1)}}">تاریخچه گیفت های دریافت شده</a>
+    </div>
+  </div>
+  <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="hide()" style="cursor:pointer" title="Close Sidemenu" id="myOverlay"></div>
+  <!-- Main Material -->
+  <div class="w3-main" id="mainApps">
+    <div >
+      <button class="w3-button w3-xlarge w3-right w3-hide-large" onclick="show()">&#9776;</button>
+      <!-- NavBar -->
+      <div class="w3-bar w3-black">
+        <a href="/logout" class="w3-bar-item w3-hover-white w3-button">خروج</a>
+        <a href="#" class="w3-bar-item w3-hover-white w3-button w3-right">تبلیغات</a>
+        <a  href = "{{url_for ('giftHandler' , pageNum = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">گیفت شاپ</a>
+		<a  href = "{{url_for ('getConfirmInstallList' , pageNum = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">تایید نصب</a>
+		<a  href = "{{url_for ('addAd')}}" class="w3-bar-item w3-hover-white w3-button w3-right">ثبت آگهی</a>
+
+      </div>
+	  
+	  
+	  
+	  
+	  {% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class="w3-container text-center title" style="color:red; font-size:150%;">
+				<br>
+				{% for message in messages %}
+					<li>{{ message }}</li>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+	  
+	  
+	  
+	  
+      <!-- Title -->
+      <div class="w3-container text-center title">
+        <h1>تبلیغات</h1>
+        <h4>بر روی اپ مورد نظر خود کلیک کرده و پس از دانلود آن اعتبار کسب کنید</h4>
+      </div>
+      <!-- Apps -->
+	  <div class = "w3-container text-center">
+	  <form action = {{url_for ('profileHandler', pageNum = 1)}} method = "POST" role="form" >
+	  
+		<select dir = "rtl" name = "option" class = "w3-select w3-border " onChange="this.form.submit()">
+			
+			<option value = "" disabled selected > انتخاب دسته بندی</option>
+			<option value = "1" >همه</option>
+			<option value = "2" >اپ</option>
+			<option value = "3" >بازی</option>
+			
+		</select>
+	  </form>
+	  </div>
+	   
+	  <br/>
+	  
+    
+	  
+	 {% for i in apps.items %}
+	  
+		<div class="col-sm-3">
+          <div class="thumbnail text-center w3-card">
+            <!--<img src="{{url_for('static',filename=i.icon) }}" alt="app icon" />-->
+			
+			<img src="{{i.icon}}" alt="app icon" />
+			<br>
+            <h4 style = "margin:5px; ">{{(i.name).title()}} <b>:نام اپلیکیشن</b></h4>
+            <h4 style = "margin:5px;">{{i.count}} <b>:تعداد دانلود</b></h4>
+            <h4 style = "margin:5px;"><b>اعتبار دریافتی:</b> {{i.credit}} تومان</h4>
+			<br>
+           <button class="btn w3-black w3-hover-white" onclick="addHistory({{i.id}})"><a style = "color:white;" href = "{{i.downloadLink}} " target = "_blank">دانلود اپ</a></button>
+		  </div>
+        </div>	
+	  
+	{% endfor %}
+	
+	
+	<div align = "center" class="w3-container">
+	{% for page in apps.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
+		{% if page %}
+			<a  style = "color:black; padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('profileHandler' , pageNum = page)}}"> {{page}}&nbsp </a>
+		{%else%}
+		...
+		{% endif %}
+	{% endfor %}
+	</div>
+	
+
+	  
+    </div>
+  </div>
+  <footer class="w3-container text-center">
+    <h2>بیلبورد</h2>
+    <p>
+      راه های ارتباط با ما
+    </p>
+    <p>
+      پست الکترونیک : contact@billboard.com
+    </p>
+    <p>
+      شماره تماس : 02188888888
+    </p>
+    <a class="up-arrow" href="#mainApps" data-toggle="tooltip" title="TOP"><span class="glyphicon glyphicon-chevron-up"></span></a>
+
+  </footer>
+
+</body>

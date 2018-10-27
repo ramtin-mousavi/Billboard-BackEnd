@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Admin Request</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-flat.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='adminDashboard.css') }}" />
+</head>
+<script>
+  function hide() {
+    document.getElementById("rightPanel").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+  }
+
+  function show() {
+    document.getElementById("rightPanel").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+  }
+</script>
+
+<body>
+  <div class="w3-bar w3-light-gray w3-xlarge">
+    <div class="w3-row">
+      <div class="w3-col s5 l2 w3-light-blue text-center" style="height:60px">
+        <span class="w3-text-black Logo">Billboard</span>
+      </div>
+      <div class="w3-col s7 l10">
+        <a><span class="glyphicon glyphicon-log-out w3-bar-item w3-text-black w3-hover-gray w3-hide-small"></span></a>
+        <a><span class="glyphicon glyphicon-envelope w3-bar-item w3-hide-small w3-text-black w3-hover-gray"></span></a>
+        <a><span class="fas fa-tasks w3-bar-item w3-hide-small w3-text-black w3-hover-gray"></span></a>
+        <button class="w3-button w3-bar-item w3-xlarge w3-right w3-hide-large" onclick="show()">&#9776;</button>
+        <img class="w3-circle w3-right bar-pic w3-margin-right" src="{{ url_for('static',filename='avatar.png') }}" style="width:50px;" />
+        <span class="w3-bar-item w3-right admin-name w3-hide-small">Admin</span>
+      </div>
+    </div>
+  </div>
+  <div class="mySidebar w3-sidebar w3-flat-midnight-blue w3-bar-block w3-collapse" id="rightPanel">
+    <button class="w3-bar-item w3-button w3-hide-large" onclick="hide()">&times;</button>
+    <ul class="w3-large w3-ul">
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="{{url_for ('adminPanel')}}">
+        <span class="fas fa-home"></span>
+        <span class="w3-margin-left">داشبورد</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-tasks"style="color:#3BF9F9;"></span>
+        <span class="w3-margin-left " style="color:#3BF9F9;">بررسی درخواست ها</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fab fa-app-store-ios"></span>
+        <span class="w3-margin-left">اپلیکیشن ها</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-gift"></span>
+        <span class="w3-margin-left">گیفت ها</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-user"></span>
+        <span class="w3-margin-left">کاربران</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-envelope"></span>
+        <span class="w3-margin-left">پیغام ها</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-sign-out-alt"></span>
+        <span class="w3-margin-left">خروج</span>
+      </a></li>
+    </ul>
+  </div>
+  <div class="w3-overlay w3-animate-opacity" onclick="hide()" style="cursor:pointer" title="Close Sidemenu" id="myOverlay"></div>
+  
+
+		
+  <!-- Main Material -->
+  <div class="w3-main">
+    <div class="w3-container text-center">
+	
+	  	  {% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class="w3-container text-center" style="color:red;">
+				<br>
+				{% for message in messages %}
+					<li>{{ message }}</li>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+		<br>
+		
+      <h1>درخواست ها</h1>
+    </div>
+	
+    <!-- Requests -->
+	
+	{% for i in apps.items %}
+	
+    <div class="w3-row-padding">
+      <div class="w3-col l12">
+        <div class="w3-card text-center">
+          <div class="w3-row">
+            <div class="w3-col m3">
+              <img class="w3-circle req-app-icon" src="{{i.icon}}"/>
+            </div>
+            <div class="w3-col m3 app-name">
+              <h4>{{i.name}}</h4>
+            </div>
+            <div class="w3-col m3 ad-info">
+              <a href="#{{i.id}}" data-toggle="collapse">
+      		        <button type="button" class="btn btn-info" >مشاهده ی اطلاعات</button>
+    		      </a>
+              <div id="{{i.id}}" class="collapse w3-card">
+                <p>{{i.company}}</p>
+                <p>{{i.email}}</p>
+                <p>{{i.phone}}</p>
+              </div>
+            </div>
+            <div class="w3-col m3 acc-btns">
+              <!--<button type="button" class="w3-button w3-black w3-hover-gray" >تایید</button>
+              <button type="button" class="w3-button w3-black w3-hover-gray" >رد</button>-->
+			 <form method = 'POST' action = "{{url_for ('approveOrReject' , id = i.id)}}">
+
+			  <button type="submit" class="w3-button w3-black w3-hover-gray" name = "submit" value = "reject">رد</button>
+			  <button type="submit" class="w3-button w3-black w3-hover-gray" name = "submit" value = "approve">تایید</button>
+			  
+			  </form>
+			  
+			  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+	{% endfor %}
+
+  </div>
+</body>

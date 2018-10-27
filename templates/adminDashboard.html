@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Admin Panel</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-flat.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='adminDashboard.css') }}" />
+</head>
+<script>
+  function hide() {
+    document.getElementById("rightPanel").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+  }
+
+  function show() {
+    document.getElementById("rightPanel").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+  }
+</script>
+
+<body>
+  <div class="w3-bar w3-light-gray w3-xlarge">
+    <div class="w3-row">
+      <div class="w3-col s5 l2 w3-light-blue text-center" style="height:60px">
+        <span class="w3-text-black Logo">Billboard</span>
+      </div>
+      <div class="w3-col s7 l10">
+        <a><span class="glyphicon glyphicon-log-out w3-bar-item w3-text-black w3-hover-gray w3-hide-small"></span></a>
+        <a><span class="glyphicon glyphicon-envelope w3-bar-item w3-hide-small w3-text-black w3-hover-gray"></span></a>
+        <a><span class="fas fa-tasks w3-bar-item w3-hide-small w3-text-black w3-hover-gray"></span></a>
+        <button class="w3-button w3-bar-item w3-xlarge w3-right w3-hide-large" onclick="show()">&#9776;</button>
+        <img class="w3-circle w3-right bar-pic w3-margin-right" src="{{ url_for('static',filename='avatar.png') }}" style="width:50px;" />
+        <span class="w3-bar-item w3-right admin-name w3-hide-small">Admin</span>
+      </div>
+    </div>
+  </div>
+  <div class="mySidebar w3-sidebar w3-flat-midnight-blue w3-bar-block w3-collapse" id="rightPanel">
+    <button class="w3-bar-item w3-button w3-hide-large" onclick="hide()">&times;</button>
+    <ul class="w3-large w3-ul">
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-home" style="color:#3BF9F9;"></span>
+        <span class="w3-margin-left" style="color:#3BF9F9;">داشبورد</span>
+      </a></li>
+	  
+	  
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href= "{{url_for ('getPendingRequests' , pageNum = 1)}}">
+        <span class="fas fa-tasks"></span>
+        <span class="w3-margin-left">بررسی درخواست ها</span>
+		
+		
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fab fa-app-store-ios"></span>
+        <span class="w3-margin-left">اپلیکیشن ها</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-gift"></span>
+        <span class="w3-margin-left">گیفت ها</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-user"></span>
+        <span class="w3-margin-left">کاربران</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="#">
+        <span class="fas fa-envelope"></span>
+        <span class="w3-margin-left">پیغام ها</span>
+      </a></li>
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="/logout">
+        <span class="fas fa-sign-out-alt"></span>
+        <span class="w3-margin-left">خروج</span>
+      </a></li>
+    </ul>
+  </div>
+  <div class="w3-overlay w3-animate-opacity" onclick="hide()" style="cursor:pointer" title="Close Sidemenu" id="myOverlay"></div>
+  <!-- Main Material -->
+  <div class="w3-main">
+    <div class="w3-container text-center title">
+      <h1>Welcome <span class="w3-hide-small">Back</span>!</h1>
+    </div>
+    <div class="w3-row-padding stats">
+      <div class="w3-col s12 m6 l3">
+        <div class="w3-card text-center eye-icon w3-flat-peter-river">
+          <div class="w3-row">
+            <div class="w3-col s4">
+              <i class="fas fa-eye"></i>
+            </div>
+            <div class="w3-col-s8 text-center">
+              <h3>: تعداد بازدید امروز</h3>
+              <h4>80</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w3-col s12 m6 l3">
+        <div class="w3-card text-center user-icon w3-flat-orange">
+          <div class="w3-row">
+            <div class="w3-col s4">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="w3-col-s8 text-center">
+              <h3>: تعداد کاربران</h3>
+              <h4>20</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w3-col s12 m6 l3">
+        <div class="w3-card text-center dl-icon w3-flat-emerald">
+          <div class="w3-row">
+            <div class="w3-col s4">
+              <i class="fas fa-download"></i>
+            </div>
+            <div class="w3-col-s8 text-center">
+              <h3>: تعداد دانلود امروز</h3>
+              <h4>30</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w3-col s12 m6 l3">
+        <div class="w3-card text-center ad-icon w3-flat-alizarin">
+          <div class="w3-row">
+            <div class="w3-col s4">
+              <i class="fab fa-adversal"></i>
+            </div>
+            <div class="w3-col-s8 text-center">
+              <h3>: تعداد تبلیغات فعال</h3>
+              <h4>45</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

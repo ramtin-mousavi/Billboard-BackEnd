@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="rtl ng-scope">
+<head>
+  <title>Billboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+  <script type="text/javascript">
+    var i=-1;
+    function add_more(addbtn){
+      i++;
+      var choices=0;
+      var question_div=document.createElement('div');
+      question_div.setAttribute("id" , i );
+      question_div.setAttribute("class" , "q");
+      var question=document.createElement('input');
+      question.setAttribute("type", "text");
+      question.setAttribute  ("name","q"+i);
+      question.setAttribute("class", "question");
+
+      var br=document.createElement('br');
+      var addChoice=document.createElement('input');
+      addChoice.setAttribute("type", "button");
+      addChoice.setAttribute("onclick","add_choice(this)");
+      addChoice.setAttribute("value","افزودن گزینه");
+      addChoice.setAttribute("id","addChoice");
+      addChoice.setAttribute("class",i);
+      document.getElementById('questions').appendChild(question_div);
+      document.getElementById(i).appendChild(question);
+      document.getElementById(i).appendChild(br);
+      document.getElementById(i).appendChild(addChoice);
+      document.getElementById('questions_count').setAttribute('value',i+1);
+    }
+    function add_choice(btn){
+      var choice=document.createElement('input');
+      choice.setAttribute("type", "text");
+      choice.setAttribute("name", "item"+ btn.className);
+      choice.setAttribute('class','choice');
+      var br=document.createElement('br');
+      //var target=document.getElementById('addChoice');
+      document.getElementById(btn.className).insertBefore(choice,btn);
+      document.getElementById(btn.className).insertBefore(br,btn);
+      //document.getElementById(i).appendChild(choice);
+
+    }
+    function getInputsByValue(value)
+  {
+      var allInputs = document.getElementsByTagName("input");
+      var results = [];
+      for(var x=0;x<allInputs.length;x++)
+          if(allInputs[x].value == value)
+              results.push(allInputs[x]);
+      return results;
+  }
+  </script>
+
+  
+  <style>
+    /* Remove the navbar's default rounded borders and increase the bottom margin */
+    body{
+    direction: rtl;
+    }
+    .navbar {
+      direction: rtl;
+      margin-bottom: 50px;
+      border-radius: 0;
+    }
+
+    /* Remove the jumbotron's default bottom margin */
+     .jumbotron {
+      margin-bottom: 0;
+      height: 150px;
+    }
+
+    /* Add a gray background color and some padding to the footer */
+
+    @media (min-width: 768px) {
+      .navbar-nav>li {
+        float: right
+      }
+    }
+    .dropdown-menu{
+      background-color:rgb(181, 175, 175) ;
+      text-align: right;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      overflow: hidden;
+    }
+    .questionnaire{
+      background-color: rgb(181, 175, 175);
+      direction: rtl;
+    }
+    .form-group{
+      direction: rtl;
+    }
+    .q{
+      border-style: dashed;
+    }
+    .question{
+
+
+    }
+    #logo{
+      width:50px;
+      height: 50px;
+    }
+
+  </style>
+</head>
+<body>
+
+
+<nav class=" navbar navbar-inverse text-r " dir="rtl">
+  <div class="container-fluid ">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand dropdown-toggle text-right" data-toggle="dropdown" id="profile-nav" dir="rtl" href="#">پروفایل <span class="glyphicon glyphicon-user"></span><span class="caret"></span></a>
+        <ul class=" dropdown-menu text-right" dir="rtl" >
+          <li><a href="#"><span class="glyphicon glyphicon-user"></span> مشخصات کاربری </a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-stats"></span> فعالیت های من</a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> خروج </a></li>
+        </ul>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <a class="logo hidden-xs hidden-sm navbar-right" href="#"><img id="logo" src="logo.png"/> </a>
+      <ul class="nav navbar-nav navbar-right " dir="rtl">
+        <li ><a href="#">خانه</a></li>
+        <li class="active"><a href="#">ایجاد پرسشنامه</a></li>
+        <li><a href="#">افزودن اپلیکیشن</a></li>
+      </ul>
+
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <div class="row">
+    <div class="questionnaire col-sm-8 ">
+        <form action = {{url_for ('get_survey')}} id="questionnaire" method = "POST" dir="rtl">
+          <label for="question_name" dir="rtl"> نام پرسشنامه خود را وارد کنید </label><br>
+          <input type="text"  id="question_name" name="question_name"><br><br>
+          <input type="hidden" id="questions_count" name="questions_count"/>
+          <!-- <button class="btn btn-default" onclick="add_question()">افزودن سوال</button></br> -->
+          <div id="questions" class="container">
+          </div>
+          <button id="add_question" class="btn add-more" type="button" onclick="add_more(this)">+</button><br/>
+          <button type="submit" class="btn btn-default">ثبت نهایی</button>
+
+
+        </form>
+    </div>
+
+  </div>
+</div><br>
+
+
+
+
+</body>
+</html>
