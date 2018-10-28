@@ -23,8 +23,8 @@
 				data:{app_id:appId},
 				url: qurl,
 				dataType: "json",
-				success: function(data) { 
-					console.log(data);                    
+				success: function(data) {
+					console.log(data);
 				},
 				error: function(jqXHR) {
 					alert("error: " + jqXHR.status);
@@ -32,7 +32,7 @@
 				}
 			})
 	});
- 
+
 }
 
 </script>
@@ -41,12 +41,12 @@
 <body>
   <div class="w3-bar w3-black">
     <a href="/logout" class="w3-bar-item w3-hover-white w3-button">خروج</a>
-    <a href="{{url_for ('profileHandler' , pageNum = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">تبلیغات</a>
-    <a href="{{url_for ('giftHandler' , pageNum = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">گیفت شاپ</a>
+    <a href="{{url_for ('profileHandler' , page_numb = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">تبلیغات</a>
+    <a href="{{url_for ('giftHandler' , page_numb = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">گیفت شاپ</a>
   </div>
-  
-  
-  
+
+
+
     {% with messages = get_flashed_messages() %}
 			{% if messages %}
 				<ul class="w3-container text-center title" style="color:red; font-size:150%;">
@@ -57,18 +57,18 @@
 				</ul>
 			{% endif %}
 		{% endwith %}
-  
-  
-  
+
+
+
   <div class="w3-main-dl">
     <!-- Title -->
     <div class="w3-container text-center title">
       <h1>صفحه دانلود</h1>
       <h4>لطفا پس از اینکه اپ را نصب کردید، بر روی دکمه ی ' نصب کردم ' کلیک کنید</h4> </div>
     <!-- Pending Apps -->
-	
+
     <div class="row">
-	
+
 	{% for i in apps.items %}
       <div class="col-sm-3">
         <div class="thumbnail text-center w3-card">
@@ -80,24 +80,24 @@
         </div>
       </div>
 	  {% endfor %}
-	  
+
 	  <div align = "center" class="w3-container">
 	  	{% for page in apps.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
 		{% if page %}
-			<a  style = "color:black; padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('getConfirmInstallList' , pageNum = page)}}"> {{page}}&nbsp </a>
+			<a  style = "color:black; padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('getConfirmInstallList' , page_numb = page)}}"> {{page}}&nbsp </a>
 		{%else%}
 		...
 		{% endif %}
 	{% endfor %}
-	
+
 	  </div>
-	  
-	  
+
+
     </div>
-	
+
   </div>
-  
-  
+
+
   <footer class="container-fluid text-center">
     <h2>بیلبورد</h2>
     <p>

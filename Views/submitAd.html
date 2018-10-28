@@ -27,14 +27,14 @@
 				</ul>
 			{% endif %}
 		{% endwith %}
-		
-		
-		
+
+
+
   <div class="main">
     <div class="container">
-	
-	
-      <form action = {{url_for ('submitAd')}} method = "POST" class="w3-container w3-card w3-light-grey w3-text-blue w3-margin">
+
+
+      <form action = {{url_for ('submit_new_ad')}} method = "POST" class="w3-container w3-card w3-light-grey w3-text-blue w3-margin">
         <h2 class="w3-center">ثبت درخواست تبلیغ</h2>
         <div class="w3-row w3-section">
           <input required class="w3-input w3-border" name="company" type="text" placeholder="نام شرکت">
@@ -48,20 +48,20 @@
         <div class="w3-row w3-section">
           <input required class="w3-input w3-border" name="name" type="text" placeholder=" نام اپ">
         </div>
-		
+
 		<div class="w3-row w3-section">
           <input required class="w3-input w3-border" name="dllink" type="text" placeholder="لینک دانلود">
         </div>
-		
+
 		<div class="w3-row w3-section">
           <input required class="w3-input w3-border" name="deeplink" type="text" placeholder="دیپ لینک">
         </div>
-		
-		
+
+
         <div class="w3-row w3-section">
           <input required class="w3-input w3-border" name="iconlink" type="text" placeholder="لینک آیکون">
         </div>
-		
+
         <p class="w3-center">
           <button type="submit" class="w3-button w3-section w3-blue w3-ripple"> ثبت درخواست </button>
         </p>

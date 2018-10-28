@@ -51,15 +51,15 @@
         <h1>گیفت شاپ</h1>
         <h4>بر روی گیفت مورد نظر خود کلیک کرده و پس از تایید ، آن را دریافت کنید</h4>
       </div>
-	  
-	  
+
+
 	 {% for i in gifts.items %}
-	  
+
 		<div class="col-sm-3">
-		
+
           <div class="thumbnail text-center w3-card">
             <img src="{{url_for('static',filename=i.icon) }}" alt="app icon" />
-			
+
             <h4 style = "margin:5px; ">{{i.name}} <b>:نام گیفت</b></h4>
             <h4 style = "margin:5px;">{{i.cost}}<b> :اعتبار مورد نیاز</b></h4>
             <h4 style = "margin:5px;">{{i.supply}}<b> :موجودی</b></h4>
@@ -67,33 +67,33 @@
 			<br>
 			<button class="btn w3-black w3-hover-white" data-toggle="modal" data-target="#proceedbox{{i.id}}"><a style = "color:white;" href = "#">دریافت گیفت</a></button>
           </div>
-        </div>	
-	  
+        </div>
+
 	{% endfor %}
-	
-	
+
+
 	<div align = "center" class="w3-container">
 	{% for page in gifts.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
 		{% if page %}
-			<a  style = "color:black;padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('show_gifts' , page_numbq = page)}}"> {{page}}&nbsp </a>
+			<a  style = "color:black;padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('show_gifts' , page_numb = page)}}"> {{page}}&nbsp </a>
 		{%else%}
 		...
 		{% endif %}
 	{% endfor %}
 	</div>
-	
+
       </div>
-	  
+
 	  {% for i in gifts.items %}
       <div id="proceedbox{{i.id}}" class="modal fade" role="dialog">
         <div class="modal-dialog">
           <div class="modal-content text-center">
             <div class="modal-body">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h2>آیا از دریافت این گیفت مطمئن هستید؟</h2> 
+              <h2>آیا از دریافت این گیفت مطمئن هستید؟</h2>
             </div>
             <div class="modal-footer">
-		
+
 		<!-- data-target="reedeemSuccessful"  data-toggle="modal" data-dismiss="modal"-->
 			<form method = 'POST' action = "{{url_for ('buy_gift' , id = i.id)}}">
               <button type= "submit" class="btn w3-black w3-hover-white"   >دریافت گیفت<span class="glyphicon glyphicon-ok iconOk"></span></button>
@@ -106,9 +106,9 @@
       </div>
 	  	{% endfor %}
 
-		
-	  
-	
+
+
+
         </div>
       </div>
     </div>

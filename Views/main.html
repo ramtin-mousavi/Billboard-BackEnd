@@ -36,7 +36,7 @@ $(document).ready(function(){
         <button class="btn navbar-brand w3-black w3-hover-gray" data-toggle="modal" data-target="#login">ورود</button>
         <a class="navbar-brand2 navbar-brand" href="#">بیلبورد</a>
       </div>
-	  
+
 	  	{% with messages = get_flashed_messages() %}
 			{% if messages %}
 				<ul class="navbar-brand2 navbar-brand" style="color:red;">
@@ -47,7 +47,7 @@ $(document).ready(function(){
 				</ul>
 			{% endif %}
 		{% endwith %}
-	  
+
       <div class="collapse navbar-collapse" id="myHeader">
         <ul class="nav navbar-nav navbar-right">
           <li><a class="w3-black w3-hover-gray" href="#advertisers">تبلیغ دهندگان</a></li>
@@ -58,7 +58,7 @@ $(document).ready(function(){
       </div>
     </div>
   </nav>
-  
+
   <div class="modal fade" id="login" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -110,7 +110,7 @@ $(document).ready(function(){
             </div>
 			<div class = "form-group">
 			<br>
-				<input type="checkbox" name="acceptLaws" checked="checked"> قوانین و مقررات بیلبورد را قبول دارم<br>
+				<input type="checkbox" name="accept_laws" checked="checked"> قوانین و مقررات بیلبورد را قبول دارم<br>
 			</div>
             <button type="submit" class="btn btn-block">ثبت نام</button>
           </form>

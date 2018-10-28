@@ -1,6 +1,9 @@
+ # cd ..
+import sys
+sys.path.append("..")
 
 #import DataBase
-from conf import DataBase as db
+from Controller import DataBase as db
 from flask_login import UserMixin
 from werkzeug import generate_password_hash, check_password_hash
 
@@ -165,6 +168,8 @@ class Gift_Model (db.Model):
 
 class Survey_Model (db.Model):
 
+    __tablename__ = 'survey_model'
+
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column (db.String(40), nullable = False)
     description = db.Column (db.Text , nullable = False)
@@ -195,6 +200,8 @@ class Survey_Model (db.Model):
 
 
 class Question_Model (db.Model):
+
+    __tablename__ = 'question_model'
 
     id = db.Column(db.Integer, primary_key = True)
     context = db.Column (db.Text , nullable = False)

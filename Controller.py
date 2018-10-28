@@ -1,14 +1,21 @@
 
 
-import Model
-from conf import app
+from Models import Model
 from flask_login import login_required, login_user, logout_user , LoginManager, current_user
 from flask import Flask, flash, redirect, render_template, request, url_for , make_response
+from flask_sqlalchemy import SQLAlchemy
+import os
+from Forms import Forms
+
+app = Flask(__name__ , static_folder = 'statics' , template_folder = 'Views')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/Ramtin/Desktop/BillBoard Project/DataBase.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+DataBase = SQLAlchemy(app)
 
 
 login_manager = LoginManager()
 login_manager.session_protection = "strong"
-login_manager.init_app(conf.app)
+login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
@@ -17,7 +24,7 @@ class Load_User:
     @staticmethod
     @login_manager.user_loader
     def load_user(userid):
-        return Model.Model.User_Model.query.get(int(userid))
+        return Model.User_Model.query.get(int(userid))
 
 
 
@@ -25,6 +32,7 @@ class Home :
 
     @staticmethod
     def home_page():
+
         if current_user.is_authenticated:
             return redirect (url_for('show_apps' , page_numb = 1))
 
@@ -38,7 +46,7 @@ class Sign_Up :
     def sign_up ():
 
 
-        register_form = Register_Form (request.form)
+        register_form = Forms.Register_Form (request.form)
 
         if register_form.validate ():
             if request.method == 'POST' :
@@ -74,7 +82,7 @@ class Login :
     @staticmethod
     def login():
 
-        login_form = Login_Form (request.form)
+        login_form = Forms.Login_Form (request.form)
 
         if request.method == 'POST' and login_form.validate():
             if login_form.validate():
@@ -85,7 +93,7 @@ class Login :
                     login_user(stored_user)
 
                     if stored_user.email == 'admin':
-                        return redirect (url_for ('admin_panel'))
+                        return redirect (url_for ('render_admin_panel'))
 
                     return redirect (url_for('show_apps' , page_numb = 1))
 
@@ -175,8 +183,8 @@ class Shopping_Handler:
 
             if user.credit > temp_gift.cost:
 
-                giftHistory = Model.Gift_History_Model (user.id , temp_gift.id)
-                giftHistory.add_and_commit()
+                #giftHistory = Model.Gift_History_Model (user.id , temp_gift.id)
+                #giftHistory.add_and_commit()
 
                 user.discharge (temp_gift.cost)
                 temp_gift.discharge()
@@ -195,14 +203,14 @@ class Advertising :
     @login_required
     def request_new_ad ():
 
-        return render_template ('submit_new_ad.html')
+        return render_template ('submitAd.html')
 
 
     @staticmethod
     @login_required
     def submit_new_ad ():
 
-        submit_form = Submit_Form (request.form)
+        submit_form = Forms.Submit_Form (request.form)
 
         if submit_form.validate ():
             if request.method == 'POST' :
@@ -319,26 +327,33 @@ class Survey_Manager:
         return "DONE"
 
 #URLs
+app.add_url_rule('/' , view_func = Home.home_page)
+app.add_url_rule('/signUp' , view_func = Sign_Up.sign_up , methods = ['POST' , 'GET'])
+app.add_url_rule('/login' , view_func = Login.login , methods = ['POST' , 'GET'])
+app.add_url_rule('/logout' , view_func = Logout.logout)
+app.add_url_rule('/profile/<int:page_numb>/' , view_func = Show_Apps_Manager.show_apps, methods = ['POST' , 'GET'])
+app.add_url_rule('/giftshop/<int:page_numb>/' , view_func = Show_Gifts_Manager.show_gifts )
+app.add_url_rule('/shoppingresult/<int:id>/' , view_func = Shopping_Handler.buy_gift , methods = ['POST' , 'GET'])
+app.add_url_rule('/addad',view_func=Advertising.request_new_ad)
+app.add_url_rule('/submitadd' , view_func = Advertising.submit_new_ad , methods = ['POST' , 'GET'])
+app.add_url_rule('/adminpanel' , view_func = Admin_Panel.render_admin_panel)
+app.add_url_rule('/getPendingRequests/<int:page_numb>' , view_func = Approve_System.get_pending_requests)
+app.add_url_rule('/approveorreject/<int:id>' , view_func = Approve_System.approve_or_reject , methods = ['POST' , 'GET'])
+    #app.add_url_rule('/addhistory' , view_func = Download_History_Manager.add_history , methods = ['POST' , 'GET'])
+    #app.add_url_rule('/getconfirminstalllist/<int:page_numb>' , view_func = Download_History_Manager.get_confirm_install_list )
+    #app.add_url_rule('/addcredit' , view_func = Credit_Manager.add_credit , methods = ['POST' , 'GET'])
+    #app.add_url_rule('/revertactions/<appName>' , view_func = Credit_Manager.revert_actions)
+app.add_url_rule('/gifthistory/<int:page_numb>/' , view_func = Gift_History_Manager.gift_history_handler)
+app.add_url_rule('/addSurvey' , view_func = Survey_Manager.add_survey)
+app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 
-app.add_url_rule('/' , view_func = ctrl.Home.home_page)
-app.add_url_rule('/signUp' , view_func = ctrl.Sign_Up.sign_up , methods = ['POST' , 'GET'])
-app.add_url_rule('/login' , view_func = ctrl.Login.login , methods = ['POST' , 'GET'])
-app.add_url_rule('/logout' , view_func = ctrl.Logout.logout)
-app.add_url_rule('/profile/<int:pageNum>/' , view_func = ctrl.Show_Apps_Manager.show_apps)
-app.add_url_rule('/giftshop/<int:pageNum>/' , view_func = ctrl.Show_Gifts_Manager.show_gifts )
-app.add_url_rule('/shoppingresult/<int:id>/' , view_func = ctrl.Shopping_Handler.buy_gift )
-app.add_url_rule('/addad',view_func=ctrl.Advertising.request_new_ad)
-app.add_url_rule('/submitadd' , view_func = ctrl.Advertising.submit_new_ad , methods = ['POST' , 'GET'])
-app.add_url_rule('/adminpanel' , view_func = ctrl.Admin_Panel.render_admin_panel)
-app.add_url_rule('/getPendingRequests/<int:pageNum>' , view_func = ctrl.Approve_System.get_pending_requests)
-app.add_url_rule('/approveorreject/<int:id>' , view_func = ctrl.Approve_System.approve_or_reject , methods = ['POST' , 'GET'])
-#app.add_url_rule('/addhistory' , view_func = ctrl.Download_History_Manager.add_history , methods = ['POST' , 'GET'])
-#app.add_url_rule('/getconfirminstalllist/<int:pageNum>' , view_func = ctrl.Download_History_Manager.get_confirm_install_list )
-#app.add_url_rule('/addcredit' , view_func = ctrl.Credit_Manager.add_credit , methods = ['POST' , 'GET'])
-#app.add_url_rule('/revertactions/<appName>' , view_func = ctrl.Credit_Manager.revert_actions)
-app.add_url_rule('/gifthistory/<int:pageNum>/' , view_func = ctrl.Gift_History_Manager.gift_history_handler)
-app.add_url_rule('/addSurvey' , view_func = ctrl.Survey_Manager.add_survey)
-app.add_url_rule('/getSurvey' , view_func = ctrl.Survey_Manager.get_survey , methods = ['GET','POST'])
+
+
+
+if __name__ == "__main__":
+    app.secret_key = os.urandom(12)
+    app.run ()
+    #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names
 #Correct Survey_Manager

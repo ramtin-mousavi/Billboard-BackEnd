@@ -1,0 +1,25 @@
+@font-face {
+  src: url('B_Mitra.ttf');
+  font-family: Mitra;
+}
+body {
+  font-family: 'Mitra';
+}
+.main {
+  background-image: url('giftresult.jpg');
+  min-height: 853px;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-bottom: 0px;
+}
+.w3-card-4 {
+  background-color: white;
+}
+.w3-card-4 h3 {
+  padding: 10% 10%;
+}
+.btn {
+  margin: 10px 0;
+}

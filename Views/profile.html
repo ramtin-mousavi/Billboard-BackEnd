@@ -20,21 +20,21 @@
     document.getElementById("rightPanel").style.display = "block";
     document.getElementById("myOverlay").style.display = "block";
   }
-  
+
  /*
   function checkInstall(id) {
 	$(document).ready(function() {
 	   var appId = id;
 	   var qurl="http://192.168.1.108:5000/addcredit";
-	   
+
 	   $.ajax({
 				type: "POST",
 				cache: false,
 				data:{app_id:appId},
 				url: qurl,
 				dataType: "json",
-				success: function(data) { 
-					console.log(data);                    
+				success: function(data) {
+					console.log(data);
 				},
 				error: function(jqXHR) {
 					alert("error: " + jqXHR.status);
@@ -42,7 +42,7 @@
 				}
 			})
 	});
- 
+
 }
 
   function addHistory(id) {
@@ -55,8 +55,8 @@
 				data:{app_id:appId},
 				url: qurl,
 				dataType: "json",
-				success: function(data) { 
-					console.log(data);                    
+				success: function(data) {
+					console.log(data);
 				},
 				error: function(jqXHR) {
 					alert("error: " + jqXHR.status);
@@ -64,7 +64,7 @@
 				}
 			})
 	});
- 
+
 } */
 
 
@@ -93,14 +93,13 @@
         <a href="/logout" class="w3-bar-item w3-hover-white w3-button">خروج</a>
         <a href="#" class="w3-bar-item w3-hover-white w3-button w3-right">تبلیغات</a>
         <a  href = "{{url_for ('show_gifts' , page_numb = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">گیفت شاپ</a>
-		<!-- <a  href = "{{url_for ('getConfirmInstallList' , pageNum = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">تایید نصب</a> -->
 		<a  href = "{{url_for ('request_new_ad')}}" class="w3-bar-item w3-hover-white w3-button w3-right">ثبت آگهی</a>
 
       </div>
-	  
-	  
-	  
-	  
+
+
+
+
 	  {% with messages = get_flashed_messages() %}
 			{% if messages %}
 				<ul class="w3-container text-center title" style="color:red; font-size:150%;">
@@ -111,10 +110,10 @@
 				</ul>
 			{% endif %}
 		{% endwith %}
-	  
-	  
-	  
-	  
+
+
+
+
       <!-- Title -->
       <div class="w3-container text-center title">
         <h1>تبلیغات</h1>
@@ -123,29 +122,29 @@
       <!-- Apps -->
 	  <div class = "w3-container text-center">
 	  <form action = {{url_for ('show_apps', page_numb = 1)}} method = "POST" role="form" >
-	  
+
 		<select dir = "rtl" name = "option" class = "w3-select w3-border " onChange="this.form.submit()">
-			
+
 			<option value = "" disabled selected > انتخاب دسته بندی</option>
 			<option value = "1" >همه</option>
 			<option value = "2" >اپ</option>
 			<option value = "3" >بازی</option>
-			
+
 		</select>
 	  </form>
 	  </div>
-	   
+
 	  <br/>
-	  
-    
-	  
+
+
+
 	 {% for i in apps.items %}
-	  
+
 		<div class="col-sm-3">
           <div class="thumbnail text-center w3-card">
-		  
+
             <!--<img src="{{url_for('static',filename=i.icon) }}" alt="app icon" />-->
-			
+
 			<img src="{{i.icon}}" alt="app icon" />
 			<br>
             <h4 style = "margin:5px; ">{{(i.name).title()}} <b>:نام اپلیکیشن</b></h4>
@@ -154,23 +153,23 @@
 			<br>
            <button class="btn w3-black w3-hover-white" onclick="addHistory({{i.id}})"><a style = "color:white;" href = "{{i.download_link}} " target = "_blank">دانلود اپ</a></button>
 		  </div>
-        </div>	
-	  
+        </div>
+
 	{% endfor %}
-	
-	
+
+
 	<div align = "center" class="w3-container">
 	{% for page in apps.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
 		{% if page %}
-			<a  style = "color:black; padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('profileHandler' , pageNum = page)}}"> {{page}}&nbsp </a>
+			<a  style = "color:black; padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('show_apps' , page_numb = page)}}"> {{page}}&nbsp </a>
 		{%else%}
 		...
 		{% endif %}
 	{% endfor %}
 	</div>
-	
 
-	  
+
+
     </div>
   </div>
   <footer class="w3-container text-center">

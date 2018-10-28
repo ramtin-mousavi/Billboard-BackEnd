@@ -43,7 +43,7 @@
   <div class="mySidebar w3-sidebar w3-flat-midnight-blue w3-bar-block w3-collapse" id="rightPanel">
     <button class="w3-bar-item w3-button w3-hide-large" onclick="hide()">&times;</button>
     <ul class="w3-large w3-ul">
-      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="{{url_for ('render_admin_panel')}}">
+      <li class="w3-padding-small w3-margin-top w3-bar"><a class="panelItem" href="{{url_for ('render_admin_panel' , page_numb = 1)}}">
         <span class="fas fa-home"></span>
         <span class="w3-margin-left">داشبورد</span>
       </a></li>
@@ -74,13 +74,13 @@
     </ul>
   </div>
   <div class="w3-overlay w3-animate-opacity" onclick="hide()" style="cursor:pointer" title="Close Sidemenu" id="myOverlay"></div>
-  
 
-		
+
+
   <!-- Main Material -->
   <div class="w3-main">
     <div class="w3-container text-center">
-	
+
 	  	  {% with messages = get_flashed_messages() %}
 			{% if messages %}
 				<ul class="w3-container text-center" style="color:red;">
@@ -92,14 +92,14 @@
 			{% endif %}
 		{% endwith %}
 		<br>
-		
+
       <h1>درخواست ها</h1>
     </div>
-	
+
     <!-- Requests -->
-	
+
 	{% for i in apps.items %}
-	
+
     <div class="w3-row-padding">
       <div class="w3-col l12">
         <div class="w3-card text-center">
@@ -127,10 +127,10 @@
 
 			  <button type="submit" class="w3-button w3-black w3-hover-gray" name = "submit" value = "reject">رد</button>
 			  <button type="submit" class="w3-button w3-black w3-hover-gray" name = "submit" value = "approve">تایید</button>
-			  
+
 			  </form>
-			  
-			  
+
+
             </div>
           </div>
         </div>
