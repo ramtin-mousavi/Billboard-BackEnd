@@ -6,15 +6,19 @@ sys.path.append("..")
 from Controller import DataBase as db
 from flask_login import UserMixin
 from werkzeug import generate_password_hash, check_password_hash
-
+from datetime import datetime
 
 
 class User_Model (db.Model, UserMixin):
+
+    __tablename__ = 'user_model'
+
     id = db.Column(db.Integer, primary_key=True)
     name =  db.Column(db.String(50), nullable = False)
     email = db.Column(db.String(50), unique=True , nullable = False)
     pass_hash = db.Column(db.String(54))
     credit = db.Column (db.Integer)
+
 
     def __init__ (self , name , email , password):
         self.name = name
@@ -132,13 +136,15 @@ class Gift_Model (db.Model):
 
 
 
-    def __init__ (self,name,icon,code,description , supply, cost):
+
+    def __init__ (self,name,icon,code,description , supply, cost , user_id = None):
         self.name = name
         self.icon = icon
         self.description = description
         self.supply = supply
         self.cost = cost
         self.code = code
+
 
 
 
@@ -152,16 +158,43 @@ class Gift_Model (db.Model):
         db.session.commit()
 
 
+
     @staticmethod
     def paginate_query (per,num,error):
         return Gift_Model.query.filter(Gift_Model.supply > 0).paginate (per_page = per , page = num , error_out = error)
 
     @staticmethod
-    def id_query (ID):
-        return Gift_Model.query.get (ID)
+    def id_query (Id):
+        return Gift_Model.query.get (Id)
 
-    #####date = db.Column(db.DateTime, default = datetime.now)
 
+
+
+class Gift_History_Model (db.Model):
+
+    id = db.Column(db.Integer, primary_key = True)
+    user_id = db.Column(db.Integer, nullable = False)
+    gift_id = db.Column(db.Integer, nullable = False)
+    date = db.Column(db.DateTime, default = datetime.now)
+    description = db.Column(db.Text, nullable=False)
+    code = db.Column(db.Integer)
+
+
+    def __init__(self, user_id , giftId ):
+        self.user_id = user_id
+        self.gift_id = giftId
+        self.description = Gift_Model.query.get (giftId).description
+        self.code = Gift_Model.query.get (giftId).code
+
+
+    def add_and_commit(self):
+        db.session.add (self)
+        db.session.commit()
+
+
+    @staticmethod
+    def paginate_query(per, num, error, user_id):
+        return Gift_History_Model.query.filter_by(user_id = user_id).paginate(per_page=per, page=num, error_out=error)
 
 
 

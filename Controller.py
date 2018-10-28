@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from Forms import Forms
 
+
 app = Flask(__name__ , static_folder = 'statics' , template_folder = 'Views')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/Ramtin/Desktop/BillBoard Project/DataBase.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -183,11 +184,15 @@ class Shopping_Handler:
 
             if user.credit > temp_gift.cost:
 
-                #giftHistory = Model.Gift_History_Model (user.id , temp_gift.id)
-                #giftHistory.add_and_commit()
+
 
                 user.discharge (temp_gift.cost)
                 temp_gift.discharge()
+
+
+                #Save Transaction Record
+                gift_history = Model.Gift_History_Model (user.id , temp_gift.id)
+                gift_history.add_and_commit()
 
                 return render_template ('giftresult.html' , gift = temp_gift)
 
@@ -282,7 +287,6 @@ class Approve_System:
 
 
 
-################## Do It Using Foreign Key ##############
 class Gift_History_Manager:
 
     @staticmethod
@@ -291,9 +295,9 @@ class Gift_History_Manager:
 
         user = Load_User.load_user (current_user.id)
         user_id = user.id
-        gifts = Model.Gift_History_Model.paginate_query(8, page_numb, True, user_id)
+        history = Model.Gift_History_Model.paginate_query(8, page_numb, True, user_id)
 
-        return render_template('NewHistory.html', gifts = gifts , user = user)
+        return render_template('NewHistory.html', history = history , user = user)
 
 
 class Survey_Manager:

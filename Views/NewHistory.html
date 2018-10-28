@@ -67,9 +67,9 @@
                 تاریخ دریافت
               </th>
             </tr>
-			
-			{% for item in gifts.items %}
-			
+
+			{% for item in history.items %}
+
             <tr>
               <th>
                 {{item.code}}
@@ -81,12 +81,12 @@
                  {{item.date}}
               </th>
             </tr>
-			
+
 			{% endfor %}
-			
-			
+
+
 			<div align = "center" class="w3-container">
-	{% for page in gifts.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
+	{% for page in history.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
 		{% if page %}
 			<a  style = "color:black; padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('gift_history_handler' , page_numb = page)}}"> {{page}}&nbsp </a>
 		{%else%}
@@ -94,8 +94,8 @@
 		{% endif %}
 	{% endfor %}
 	</div>
-	
-	
+
+
           </table>
         </div>
       </div>
