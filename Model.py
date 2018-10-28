@@ -1,9 +1,6 @@
-# cd ..
-import sys
-sys.path.append("..")
 
 #import DataBase
-from config import DataBase as db
+from conf import DataBase as db
 from flask_login import UserMixin
 from werkzeug import generate_password_hash, check_password_hash
 
@@ -121,14 +118,14 @@ class Android_Model (db.Model):
 
 
 
-class Gift_Model (myDB.Model):
-    id = myDB.Column (myDB.Integer, primary_key = True)
-    name =  myDB.Column(myDB.String(50), nullable = False)
-    icon = myDB.Column (myDB.Text , nullable = False)
-    code = myDB.Column (myDB.Integer)
-    description = myDB.Column (myDB.Text , nullable = False)
-    supply = myDB.Column (myDB.Integer)
-    cost = myDB.Column (myDB.Integer)
+class Gift_Model (db.Model):
+    id = db.Column (db.Integer, primary_key = True)
+    name =  db.Column(db.String(50), nullable = False)
+    icon = db.Column (db.Text , nullable = False)
+    code = db.Column (db.Integer)
+    description = db.Column (db.Text , nullable = False)
+    supply = db.Column (db.Integer)
+    cost = db.Column (db.Integer)
 
 
 
@@ -145,11 +142,11 @@ class Gift_Model (myDB.Model):
     def discharge (self):
         if self.supply > 0 :
             self.supply -= 1
-            myDB.session.commit()
+            db.session.commit()
 
     def charge (self, count):
         self.supply += count
-        myDB.session.commit()
+        db.session.commit()
 
 
     @staticmethod
@@ -160,20 +157,20 @@ class Gift_Model (myDB.Model):
     def id_query (ID):
         return Gift_Model.query.get (ID)
 
-    #####date = myDB.Column(myDB.DateTime, default = datetime.now)
+    #####date = db.Column(db.DateTime, default = datetime.now)
 
 
 
 
 
-class Survey_Model (myDB.Model):
+class Survey_Model (db.Model):
 
-    id = myDB.Column(myDB.Integer, primary_key = True)
-    title = myDB.Column (myDB.String(40), nullable = False)
-    description = myDB.Column (myDB.Text , nullable = False)
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column (db.String(40), nullable = False)
+    description = db.Column (db.Text , nullable = False)
     # foreign key to user
-    questions = myDB.relationship ('Question_Model' , backref = 'survey_model' , lazy = True)
-    is_approved = myDB.Column (myDB.Boolean , nullable = False)
+    questions = db.relationship ('Question_Model' , backref = 'survey_model' , lazy = True)
+    is_approved = db.Column (db.Boolean , nullable = False)
 
 
     def __init__ (self , title , description ):
@@ -185,24 +182,24 @@ class Survey_Model (myDB.Model):
 
     def approve (self):
         self.is_approved = True
-        myDB.session.commit()
+        db.session.commit()
 
     def reject (self):
-        myDB.session.delete (self)
-        myDB.session.commit()
+        db.session.delete (self)
+        db.session.commit()
 
     def add_and_commit (self):
-        myDB.session.add (self)
-        myDB.session.commit()
+        db.session.add (self)
+        db.session.commit()
 
 
 
-class Question_Model (myDB.Model):
+class Question_Model (db.Model):
 
-    id = myDB.Column(myDB.Integer, primary_key = True)
-    context = myDB.Column (myDB.Text , nullable = False)
-    items = myDB.relationship ('Item_Model' , backref = 'question_model' , lazy = True)
-    survey_id = myDB.Column(myDB.Integer, myDB.ForeignKey('survey_model.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key = True)
+    context = db.Column (db.Text , nullable = False)
+    items = db.relationship ('Item_Model' , backref = 'question_model' , lazy = True)
+    survey_id = db.Column(db.Integer, db.ForeignKey('survey_model.id'), nullable=False)
 
     def __init__ (self , context , survey_id):
         self.context = context
@@ -210,15 +207,15 @@ class Question_Model (myDB.Model):
 
 
     def add_and_commit (self):
-        myDB.session.add (self)
-        myDB.session.commit()
+        db.session.add (self)
+        db.session.commit()
 
 
-class Item_Model (myDB.Model):
+class Item_Model (db.Model):
 
-    id = myDB.Column(myDB.Integer, primary_key = True)
-    context = myDB.Column (myDB.Text , nullable = False)
-    question_id = myDB.Column(myDB.Integer, myDB.ForeignKey('question_model.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key = True)
+    context = db.Column (db.Text , nullable = False)
+    question_id = db.Column(db.Integer, db.ForeignKey('question_model.id'), nullable=False)
 
     def __init__ (self , context , question_id):
         self.context = context
@@ -226,5 +223,5 @@ class Item_Model (myDB.Model):
 
 
     def add_and_commit (self):
-        myDB.session.add (self)
-        myDB.session.commit()
+        db.session.add (self)
+        db.session.commit()

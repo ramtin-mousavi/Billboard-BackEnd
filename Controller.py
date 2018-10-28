@@ -1,9 +1,15 @@
-import sys
-sys.path.append("..")
 
-from Models import Model
+
+import Model
+from conf import app
 from flask_login import login_required, login_user, logout_user , LoginManager, current_user
 from flask import Flask, flash, redirect, render_template, request, url_for , make_response
+
+
+login_manager = LoginManager()
+login_manager.session_protection = "strong"
+login_manager.init_app(conf.app)
+login_manager.login_view = 'login'
 
 
 class Load_User:
@@ -11,11 +17,11 @@ class Load_User:
     @staticmethod
     @login_manager.user_loader
     def load_user(userid):
-        return Model.User_Model.query.get(int(userid))
+        return Model.Model.User_Model.query.get(int(userid))
 
 
 
-class Main :
+class Home :
 
     @staticmethod
     def home_page():
@@ -37,7 +43,7 @@ class Sign_Up :
         if register_form.validate ():
             if request.method == 'POST' :
 
-                user = User_Model (request.form['name'] , request.form['email'] , request.form['password'])
+                user = Model.User_Model (request.form['name'] , request.form['email'] , request.form['password'])
                 user.add_and_commit ()
 
                 flash ('شما با موفقيت ثبت نام شديد')
@@ -73,7 +79,7 @@ class Login :
         if request.method == 'POST' and login_form.validate():
             if login_form.validate():
 
-                stored_user = User_Model.email_query (request.form['username'])
+                stored_user = Model.User_Model.email_query (request.form['username'])
 
                 if (stored_user is not None) and (stored_user.check_password(request.form['password'])):
                     login_user(stored_user)
@@ -127,20 +133,20 @@ class Show_Apps_Manager:
         if req != None:
 
             if int (req) == 3:
-                apps = Android_Model.paginate_by_filter (8,page_numb,True,'Game')
+                apps = Model.Android_Model.paginate_by_filter (8,page_numb,True,'Game')
                 return render_template ('profile.html', user = Load_User.load_user (current_user.id) , apps = apps)
 
             elif int (req) == 2:
-                apps = Android_Model.paginate_by_filter (8,page_numb,True,'App')
+                apps = Model.Android_Model.paginate_by_filter (8,page_numb,True,'App')
                 return render_template ('profile.html', user = Load_User.load_user (current_user.id) , apps = apps)
 
             elif int ( req ) == 1:
-                apps = Android_Model.paginate_query (8,page_numb,True)
+                apps = Model.Android_Model.paginate_query (8,page_numb,True)
                 return render_template ('profile.html', user = Load_User.load_user (current_user.id) , apps = apps)
 
         # If No Filter
         else:
-            apps = Android_Model.paginate_query (8,page_numb,True)
+            apps = Model.Android_Model.paginate_query (8,page_numb,True)
             return render_template ('profile.html', user = Load_User.load_user (current_user.id) , apps = apps)
 
 
@@ -150,7 +156,7 @@ class Show_Gifts_Manager:
     @login_required
     def show_gifts (page_numb):
 
-        gifts = Gift_Model.paginate_query (8, page_numb, True)
+        gifts = Model.Gift_Model.paginate_query (8, page_numb, True)
         return render_template ('giftshop.html' ,user = Load_User.load_user (current_user.id) , gifts = gifts)
 
 
@@ -162,14 +168,14 @@ class Shopping_Handler:
     @login_required
     def buy_gift (id):
 
-        temp_gift = Gift_Model.id_query (id)
+        temp_gift = Model.Gift_Model.id_query (id)
 
         if temp_gift.supply > 0:
             user = Load_User.load_user (current_user.id)
 
             if user.credit > temp_gift.cost:
 
-                giftHistory = Gift_History_Model (user.id , temp_gift.id)
+                giftHistory = Model.Gift_History_Model (user.id , temp_gift.id)
                 giftHistory.add_and_commit()
 
                 user.discharge (temp_gift.cost)
@@ -201,7 +207,7 @@ class Advertising :
         if submit_form.validate ():
             if request.method == 'POST' :
 
-                new_app = Android_Model (request.form ['name'] , request.form ['iconlink'] , 'App' , 100 , request.form ['dllink'] , request.form ['deeplink'] ,
+                new_app = Model.Android_Model (request.form ['name'] , request.form ['iconlink'] , 'App' , 100 , request.form ['dllink'] , request.form ['deeplink'] ,
                                        request.form ['company'] , request.form ['email'] , request.form ['phone'] )
                 new_app.add_and_commit ()
                 flash ('آگهي شما ثبت شد و پس از تاييد در سايت قرار داده خواهد شد')
@@ -237,7 +243,7 @@ class Approve_System:
 
         if Load_User.load_user (current_user.id).email == 'admin':
 
-            apps = Android_Model.paginate_query_for_admin (8 , page_numb , True)
+            apps = Model.Android_Model.paginate_query_for_admin (8 , page_numb , True)
             return render_template ('adminPendingRequests.html' , apps = apps)
 
 
@@ -248,7 +254,7 @@ class Approve_System:
     @login_required
     def approve_or_reject (id):
 
-        app = Android_Model.query.get (id)
+        app = Model.Android_Model.query.get (id)
         if request.form ['submit'] == 'approve':
 
             app.approve()
@@ -277,7 +283,7 @@ class Gift_History_Manager:
 
         user = Load_User.load_user (current_user.id)
         user_id = user.id
-        gifts = Gift_History_Model.paginate_query(8, page_numb, True, user_id)
+        gifts = Model.Gift_History_Model.paginate_query(8, page_numb, True, user_id)
 
         return render_template('NewHistory.html', gifts = gifts , user = user)
 
@@ -296,18 +302,43 @@ class Survey_Manager:
     def get_survey ():
 
         count = request.form ['questions_count']
-        survey = Survey_Model (request.form ['question_name'] , 'description')
+        survey = Model.Survey_Model (request.form ['question_name'] , 'description')
         survey.add_and_commit()
 
         for question_number in range (int(count)):
 
-            new_question = Question_Model (request.form ['q'+str(question_number)] , survey.id)
+            new_question = Model.Question_Model (request.form ['q'+str(question_number)] , survey.id)
             new_question.add_and_commit()
 
             for item in request.form.getlist('item'+str(question_number)):
 
-                new_item = Item_Model (item , new_question.id)
+                new_item = Model.Item_Model (item , new_question.id)
                 new_item.add_and_commit()
 
 
         return "DONE"
+
+#URLs
+
+app.add_url_rule('/' , view_func = ctrl.Home.home_page)
+app.add_url_rule('/signUp' , view_func = ctrl.Sign_Up.sign_up , methods = ['POST' , 'GET'])
+app.add_url_rule('/login' , view_func = ctrl.Login.login , methods = ['POST' , 'GET'])
+app.add_url_rule('/logout' , view_func = ctrl.Logout.logout)
+app.add_url_rule('/profile/<int:pageNum>/' , view_func = ctrl.Show_Apps_Manager.show_apps)
+app.add_url_rule('/giftshop/<int:pageNum>/' , view_func = ctrl.Show_Gifts_Manager.show_gifts )
+app.add_url_rule('/shoppingresult/<int:id>/' , view_func = ctrl.Shopping_Handler.buy_gift )
+app.add_url_rule('/addad',view_func=ctrl.Advertising.request_new_ad)
+app.add_url_rule('/submitadd' , view_func = ctrl.Advertising.submit_new_ad , methods = ['POST' , 'GET'])
+app.add_url_rule('/adminpanel' , view_func = ctrl.Admin_Panel.render_admin_panel)
+app.add_url_rule('/getPendingRequests/<int:pageNum>' , view_func = ctrl.Approve_System.get_pending_requests)
+app.add_url_rule('/approveorreject/<int:id>' , view_func = ctrl.Approve_System.approve_or_reject , methods = ['POST' , 'GET'])
+#app.add_url_rule('/addhistory' , view_func = ctrl.Download_History_Manager.add_history , methods = ['POST' , 'GET'])
+#app.add_url_rule('/getconfirminstalllist/<int:pageNum>' , view_func = ctrl.Download_History_Manager.get_confirm_install_list )
+#app.add_url_rule('/addcredit' , view_func = ctrl.Credit_Manager.add_credit , methods = ['POST' , 'GET'])
+#app.add_url_rule('/revertactions/<appName>' , view_func = ctrl.Credit_Manager.revert_actions)
+app.add_url_rule('/gifthistory/<int:pageNum>/' , view_func = ctrl.Gift_History_Manager.gift_history_handler)
+app.add_url_rule('/addSurvey' , view_func = ctrl.Survey_Manager.add_survey)
+app.add_url_rule('/getSurvey' , view_func = ctrl.Survey_Manager.get_survey , methods = ['GET','POST'])
+
+# Correct Names
+#Correct Survey_Manager

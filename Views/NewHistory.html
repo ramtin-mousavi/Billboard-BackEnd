@@ -42,8 +42,8 @@
       <!-- NavBar -->
       <div class="w3-bar w3-black">
         <a href="/logout" class="w3-bar-item w3-hover-white w3-button">خروج</a>
-        <a href="{{url_for ('profileHandler' , pageNum = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">تبلیغات</a>
-        <a href="{{url_for ('giftHandler' , pageNum = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">گیفت شاپ</a>
+        <a href="{{url_for ('show_apps' , page_numb = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">تبلیغات</a>
+        <a href="{{url_for ('show_gifts' , page_numb = 1)}}" class="w3-bar-item w3-hover-white w3-button w3-right">گیفت شاپ</a>
       </div>
       <!-- Title -->
       <div class="w3-container text-center title">
@@ -88,7 +88,7 @@
 			<div align = "center" class="w3-container">
 	{% for page in gifts.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
 		{% if page %}
-			<a  style = "color:black; padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('giftHistoryHandler' , pageNum = page)}}"> {{page}}&nbsp </a>
+			<a  style = "color:black; padding-left: 18px; padding-bottom:25px; font-size:20px;" href = "{{url_for ('gift_history_handler' , page_numb = page)}}"> {{page}}&nbsp </a>
 		{%else%}
 		...
 		{% endif %}
