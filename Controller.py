@@ -306,12 +306,13 @@ class Survey_Manager:
     @login_required
     def add_survey ():
 
-        return render_template ('temp.html')
+        return render_template ('survey.html')
 
 
     @staticmethod
     @login_required
     def get_survey ():
+        
 
         count = request.form ['questions_count']
         survey = Model.Survey_Model (request.form ['question_name'] , 'description')
@@ -356,7 +357,7 @@ app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods 
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run ()
+    app.run (debug = False)
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names
