@@ -263,17 +263,17 @@ class Item_Model (db.Model):
     id = db.Column(db.Integer, primary_key = True)
     context = db.Column (db.Text , nullable = False)
     question_id = db.Column(db.Integer, db.ForeignKey('question_model.id'), nullable=False)
-    vote = db.Column (db.Integer , nullable = False)
+    vote_count = db.Column (db.Integer , nullable = False)
 
     def __init__ (self , context , question_id):
         self.context = context
         self.question_id = question_id
-        self.vote = 0
+        self.vote_count = 0
 
 
     def vote (self):
-        self.vote += 1
-        db.session.commit
+        self.vote_count += 1
+        db.session.commit()
 
 
     def add_and_commit (self):

@@ -44,46 +44,54 @@
                 شاپ</a>
         </div>
         <!-- Title -->
+
+    <form action = {{url_for ('submit_filling')}} method = "POST" role="form" >
+
         <div class="w3-container text-center title">
-            <h1 style="color: #122b40"><strong>عنوان پرسشنامه</strong></h1>
+            <h1 style="color: #122b40"><strong>{{survey.title}}</strong></h1>
             <h3 style="color: #122b40">توضیحات مربوط به پرسشنامه</h3>
         </div>
 
         <!--Surveys-->
         <div class="questions">
+
+        {%for question in questions%}
+
           <!-- Question1 -->
           <div class="question">
             <div class="w3-row">
               <div class="w3-col " dir="rtl">
-                <h3 style="color: #122b40">1. به نظر شما کدامیک مقصر است؟</h3>
+                <h3 style="color: #122b40">{{question.context}}</h3>
               </div>
             </div>
             <!-- All radio inputs in a group should have the same name attr -->
+
+
             <div class="w3-row flex-container2" dir="rtl">
+
+                {%for item in question.items%}
+
               <div class="w3-col s3">
-                <input class="w3-radio" name="q0" type="radio" checked/><label>مرد 1</label>
+                <input class="w3-radio" name="{{question.id}}" value="{{item.id}}" type="radio" checked/><label>{{item.context}}</label>
               </div>
-              <div class="w3-col s3">
-                <input class="w3-radio" name="q0"type="radio" /><label>مرد 2</label>
-              </div>
-              <div class="w3-col s3">
-                <input class="w3-radio" name="q0"type="radio" /><label>مرد 3</label>
-              </div>
-              <div class="w3-col s3">
-                <input class="w3-radio" name="q0"type="radio" /><label>مرد 4</label>
-              </div>
+
+              {%endfor%}
+
             </div>
-            <div class="w3-row flex-container2" dir="rtl">
-              <div class="w3-col s3">
-                <input class="w3-radio" name="q0"type="radio" /><label>مرد 5</label>
-              </div>
-              <div class="w3-col s3">
-                <input class="w3-radio" name="q0"type="radio" /><label>مرد 6</label>
-              </div>
-            </div>
+
+
           </div>
+
+          {%endfor%}
+
+          <button type="submit" class="btn btn-default">ثبت نهایی</button>
+
+
         </div>
     </div>
+
+    </form>
+
 </div>
 
 <!--  about us  -->

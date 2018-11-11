@@ -328,8 +328,8 @@ class Survey_Manager:
                 new_item = Model.Item_Model (item , new_question.id)
                 new_item.add_and_commit()
 
-
-        return "DONE"
+        flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
+        return redirect (url_for("show_apps" , page_numb = 1))
 
 @login_required
 def show_survey(page_numb):
@@ -344,6 +344,13 @@ def fill_survey (id):
     questions = survey.questions
     return render_template ("survey-answer.html" , survey = survey , questions = questions)
 
+
+@login_required
+def submit_filling():
+    for key  in request.form:
+        item = Model.Item_Model.query.get (int(request.form[key]))
+        item.vote()
+    return "HIIII"
 
 
 #URLs
@@ -367,8 +374,10 @@ app.add_url_rule('/gifthistory/<int:page_numb>/' , view_func = Gift_History_Mana
 app.add_url_rule('/addSurvey' , view_func = Survey_Manager.add_survey)
 app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 
+
 app.add_url_rule('/showSurvey/<int:page_numb>/' , view_func = show_survey )
 app.add_url_rule('/fillSurvey/<int:id>' , view_func = fill_survey )
+app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
 
 
 
