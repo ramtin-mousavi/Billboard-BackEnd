@@ -306,12 +306,13 @@ class Survey_Manager:
     @login_required
     def add_survey ():
 
-        return render_template ('temp.html')
+        return render_template ('survey.html')
 
 
     @staticmethod
     @login_required
     def get_survey ():
+
 
         count = request.form ['questions_count']
         survey = Model.Survey_Model (request.form ['question_name'] , 'description')
@@ -329,6 +330,21 @@ class Survey_Manager:
 
 
         return "DONE"
+
+@login_required
+def show_survey(page_numb):
+    surveys = Model.Survey_Model.paginate_query (8 , page_numb , True)
+    return render_template ("surveys-list.html" , surveys = surveys)
+
+
+@login_required
+def fill_survey (id):
+
+    survey = Model.Survey_Model.query.get (id)
+    questions = survey.questions
+    return render_template ("survey-answer.html" , survey = survey , questions = questions)
+
+
 
 #URLs
 app.add_url_rule('/' , view_func = Home.home_page)
@@ -351,12 +367,17 @@ app.add_url_rule('/gifthistory/<int:page_numb>/' , view_func = Gift_History_Mana
 app.add_url_rule('/addSurvey' , view_func = Survey_Manager.add_survey)
 app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 
+app.add_url_rule('/showSurvey/<int:page_numb>/' , view_func = show_survey )
+app.add_url_rule('/fillSurvey/<int:id>' , view_func = fill_survey )
+
+
+
 
 
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run ()
+    app.run (debug = True)
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names
