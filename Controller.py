@@ -43,45 +43,62 @@ class Home :
 
 class Sign_Up :
 
+    @app.route('/api/v1/signup', methods=["POST"])
+    def sign_up_api():
+        register_form = Forms.Register_Form(request.form)
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
+        if register_form.validate():
+            if request.method == 'POST':
+                user = Model.User_Model(name, email, password)
+                user.add_and_commit()
+                return jsonify(user.serialize())
+            else:
+                return "method is not POST."
+        else:
+            if 'name' in register_form.errors:
+                return "name is empty."
+            if 'email' in register_form.errors:
+                return "email is not valid."
+            if "password" in register_form.errors:
+                return jsonify(register_form.errors)
+
     @staticmethod
     def sign_up ():
 
+        register_form = Forms.Register_Form(request.form)
 
-        register_form = Forms.Register_Form (request.form)
+        if register_form.validate():
+            if request.method == 'POST':
 
-        if register_form.validate ():
-            if request.method == 'POST' :
+                user = Model.User_Model(request.form['name'], request.form['email'], request.form['password'])
+                user.add_and_commit()
 
-                user = Model.User_Model (request.form['name'] , request.form['email'] , request.form['password'])
-                user.add_and_commit ()
+                flash('شما با موفقيت ثبت نام شديد')
+                flash('لطفا از منوي «ورود» اقدام به وارد شدن فرماييد')
 
-                flash ('شما با موفقيت ثبت نام شديد')
-                flash ('لطفا از منوي «ورود» اقدام به وارد شدن فرماييد')
-
-                return redirect (url_for('home_page'))
+                return redirect(url_for('home_page'))
 
             else:
-                return redirect (url_for('home_page'))
-
+                return redirect(url_for('home_page'))
 
         if 'name' in register_form.errors:
-            flash ('لطفا فيلد نام و نام خانوادگي را پر کنيد')
+            flash('لطفا فيلد نام و نام خانوادگي را پر کنيد')
         if 'email' in register_form.errors:
-            flash ('لطفا فيلد ايميل را پر کنيد')
-        if 'password' in register_form.errors  :
-            flash ('لطفا فيلدهاي پسورد را به درستي وارد کنيد')
+            flash('لطفا فيلد ايميل را پر کنيد')
+        if 'password' in register_form.errors:
+            flash('لطفا فيلدهاي پسورد را به درستي وارد کنيد')
         if 'accept_laws' in register_form.errors:
-            flash ('شما بايد با قوانين بيلبورد موافقت کنيد')
+            flash('شما بايد با قوانين بيلبورد موافقت کنيد')
 
-
-        return redirect (url_for ('home_page'))
-
+        return redirect(url_for('home_page'))
 
 
 class Login :
 
     @app.route('/api/v1/login', methods=["POST"])
-    def loginApi():
+    def login_api():
 
         login_form = Forms.Login_Form (request.form)
         username = request.form["username"]
