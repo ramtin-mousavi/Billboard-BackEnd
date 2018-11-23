@@ -49,6 +49,13 @@ class User_Model (db.Model, UserMixin):
         self.credit += cost
         db.session.commit()
 
+    def serialize(self):
+        return {
+            "name": self.name,
+            "email": self.email,
+            "credit": self.credit
+        }
+
 
 
 class Android_Model (db.Model):

@@ -2,14 +2,14 @@
 
 from Models import Model
 from flask_login import login_required, login_user, logout_user , LoginManager, current_user
-from flask import Flask, flash, redirect, render_template, request, url_for , make_response
+from flask import Flask, flash, redirect, render_template, request, url_for , make_response, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 from Forms import Forms
 
 
 app = Flask(__name__ , static_folder = 'statics' , template_folder = 'Views')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/Ramtin/Desktop/BillBoard Project/DataBase.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/user/PycharmProjects/Billboard-BackEnd/DataBase.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 DataBase = SQLAlchemy(app)
 
@@ -79,6 +79,26 @@ class Sign_Up :
 
 
 class Login :
+
+    @app.route('/api/v1/login', methods=["POST"])
+    def loginApi():
+
+        login_form = Forms.Login_Form (request.form)
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if request.method == 'POST' and login_form.validate():
+            if login_form.validate():
+                stored_user = Model.User_Model.email_query (username)
+                if (stored_user is not None) and (stored_user.check_password(password)):
+                    return jsonify(stored_user.serialize())
+                else:
+                    if stored_user is None:
+                        return "user is not found or entered email is wrong."
+                    elif not stored_user.check_password(request.form['password']):
+                        return "password is incorrect."
+        else:
+            return "form is not valid or method is not POST."
 
     @staticmethod
     def login():
@@ -357,7 +377,7 @@ app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods 
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run (debug = False)
+    app.run (debug = True)
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names
