@@ -58,11 +58,13 @@ class Sign_Up :
                 return "method is not POST."
         else:
             if 'name' in register_form.errors:
-                return "name is empty."
+                return jsonify(register_form.errors['name'])
             if 'email' in register_form.errors:
-                return "email is not valid."
+                return jsonify(register_form.errors['email'])
             if "password" in register_form.errors:
-                return jsonify(register_form.errors)
+                return jsonify(register_form.errors['password'])
+            if 'accept_laws' in register_form.errors:
+                jsonify(register_form.errors['accept_laws'])
 
     @staticmethod
     def sign_up ():
