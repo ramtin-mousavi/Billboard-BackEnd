@@ -101,11 +101,9 @@ class Login :
 
     @app.route('/api/v1/login', methods=["POST"])
     def login_api():
-
         login_form = Forms.Login_Form (request.form)
         username = request.form["username"]
         password = request.form["password"]
-
         if request.method == 'POST' and login_form.validate():
             if login_form.validate():
                 stored_user = Model.User_Model.email_query (username)
