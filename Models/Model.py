@@ -216,12 +216,14 @@ class Survey_Model (db.Model):
     # foreign key to user
     questions = db.relationship ('Question_Model' , backref = 'survey_model' , lazy = True)
     is_approved = db.Column (db.Boolean , nullable = False)
+    credit = db.Column (db.Integer , nullable = False)
 
 
     def __init__ (self , title , description ):
         self.title = title
         self.description = description
-        self.is_approved = False
+        self.is_approved = True
+        self.credit = 100
 
 
 
@@ -236,6 +238,11 @@ class Survey_Model (db.Model):
     def add_and_commit (self):
         db.session.add (self)
         db.session.commit()
+
+
+    @staticmethod
+    def paginate_query (per,num,error):
+        return Survey_Model.query.filter(Survey_Model.is_approved == True).paginate (per_page = per , page = num , error_out = error)
 
 
 
@@ -263,10 +270,17 @@ class Item_Model (db.Model):
     id = db.Column(db.Integer, primary_key = True)
     context = db.Column (db.Text , nullable = False)
     question_id = db.Column(db.Integer, db.ForeignKey('question_model.id'), nullable=False)
+    vote_count = db.Column (db.Integer , nullable = False)
 
     def __init__ (self , context , question_id):
         self.context = context
         self.question_id = question_id
+        self.vote_count = 0
+
+
+    def vote (self):
+        self.vote_count += 1
+        db.session.commit()
 
 
     def add_and_commit (self):
