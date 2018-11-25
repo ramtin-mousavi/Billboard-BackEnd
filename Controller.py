@@ -116,21 +116,27 @@ class Login :
 
     @app.route('/api/v1/login', methods=["POST"])
     def login_api():
-        login_form = Forms.Login_Form (request.form)
-        username = request.form["username"]
-        password = request.form["password"]
-        if request.method == 'POST' and login_form.validate():
-            if login_form.validate():
-                stored_user = Model.User_Model.email_query (username)
-                if (stored_user is not None) and (stored_user.check_password(password)):
-                    return jsonify(stored_user.serialize())
-                else:
-                    if stored_user is None:
-                        return "user is not found or entered email is wrong."
-                    elif not stored_user.check_password(request.form['password']):
-                        return "password is incorrect."
+        register_req = request.get_json()
+        username = register_req.get("username")
+        password = register_req.get("password")
+        error = None
+        if register_req is None:
+            return 'request body can not be empty!'
+        if username is None:
+            error = 'username field cannot be empty!'
+        if password is None:
+            error = 'password field cannot be empty!'
+        if error is None:
+            stored_user = Model.User_Model.email_query(username)
+            if (stored_user is not None) and (stored_user.check_password(password)):
+                return jsonify(stored_user.serialize())
+            else:
+                if stored_user is None:
+                    return "user is not found or entered email is wrong."
+                elif not stored_user.check_password(request.form['password']):
+                    return "password is incorrect."
         else:
-            return "form is not valid or method is not POST."
+            return jsonify(error)
 
     @staticmethod
     def login():
