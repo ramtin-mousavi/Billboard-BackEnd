@@ -6,12 +6,19 @@ from flask import Flask, flash, redirect, render_template, request, url_for , ma
 from flask_sqlalchemy import SQLAlchemy
 import os
 from Forms import Forms
+from flask_marshmallow import Marshmallow
+import os
+
 
 
 app = Flask(__name__ , static_folder = 'statics' , template_folder = 'Views')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/user/PycharmProjects/Billboard-BackEnd/DataBase.db'
+
+dir_path = os.path.dirname(os.path.realpath(__file__)).replace ("\\" , '/').split(':')[1]
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+dir_path+'/DataBase.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 DataBase = SQLAlchemy(app)
+MarshMallow = Marshmallow (app)
 
 
 login_manager = LoginManager()
@@ -345,6 +352,8 @@ class Gift_History_Manager:
         return render_template('NewHistory.html', history = history , user = user)
 
 
+
+import json
 class Survey_Manager:
 
     @staticmethod
@@ -357,7 +366,7 @@ class Survey_Manager:
     @staticmethod
     @login_required
     def get_survey ():
-        
+
 
         count = request.form ['questions_count']
         survey = Model.Survey_Model (request.form ['question_name'] , 'description')
@@ -373,8 +382,38 @@ class Survey_Manager:
                 new_item = Model.Item_Model (item , new_question.id)
                 new_item.add_and_commit()
 
+        flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
+        return redirect (url_for("show_apps" , page_numb = 1))
 
-        return "DONE"
+
+@login_required
+def show_survey():
+
+    surveys = Model.Survey_Model.query.all()
+    output = Model.surveys_schema.dump (surveys).data
+
+    return jsonify (output)
+
+
+@login_required
+def fill_survey (id):
+
+    survey = Model.Survey_Model.query.get (id)
+    output = Model.survey_schema.dump (survey).data
+
+    return jsonify (output)
+
+
+@login_required
+def submit_filling():
+    for key  in request.form:
+        item = Model.Item_Model.query.get (int(request.form[key]))
+        item.vote()
+
+    flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
+    return redirect (url_for("show_apps" , page_numb = 1))
+
+
 
 #URLs
 app.add_url_rule('/' , view_func = Home.home_page)
@@ -398,11 +437,20 @@ app.add_url_rule('/addSurvey' , view_func = Survey_Manager.add_survey)
 app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 
 
+app.add_url_rule('/api/showSurvey' , view_func = show_survey )
+app.add_url_rule('/api/fillSurvey/<int:id>' , view_func = fill_survey )
+app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run (debug = True)
+    app.run (debug = False)
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names

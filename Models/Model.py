@@ -4,9 +4,15 @@ sys.path.append("..")
 
 #import DataBase
 from Controller import DataBase as db
+from Controller import MarshMallow as ma
 from flask_login import UserMixin
 from werkzeug import generate_password_hash, check_password_hash
 from datetime import datetime
+
+from flask_marshmallow import Marshmallow
+from marshmallow import fields
+
+
 
 
 class User_Model (db.Model, UserMixin):
@@ -206,43 +212,35 @@ class Gift_History_Model (db.Model):
 
 
 
-class Survey_Model (db.Model):
-
-    __tablename__ = 'survey_model'
+class Item_Model (db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
-    title = db.Column (db.String(40), nullable = False)
-    description = db.Column (db.Text , nullable = False)
-    # foreign key to user
-    questions = db.relationship ('Question_Model' , backref = 'survey_model' , lazy = True)
-    is_approved = db.Column (db.Boolean , nullable = False)
-    credit = db.Column (db.Integer , nullable = False)
+    context = db.Column (db.Text , nullable = False)
+    question_id = db.Column(db.Integer, db.ForeignKey('question_model.id'), nullable=False)
+    vote_count = db.Column (db.Integer , nullable = False)
+
+    def __init__ (self , context , question_id):
+        self.context = context
+        self.question_id = question_id
+        self.vote_count = 0
 
 
-    def __init__ (self , title , description ):
-        self.title = title
-        self.description = description
-        self.is_approved = True
-        self.credit = 100
-
-
-
-    def approve (self):
-        self.is_approved = True
+    def vote (self):
+        self.vote_count += 1
         db.session.commit()
 
-    def reject (self):
-        db.session.delete (self)
-        db.session.commit()
 
     def add_and_commit (self):
         db.session.add (self)
         db.session.commit()
 
+class Item_Model_Schema (ma.ModelSchema):
 
-    @staticmethod
-    def paginate_query (per,num,error):
-        return Survey_Model.query.filter(Survey_Model.is_approved == True).paginate (per_page = per , page = num , error_out = error)
+    class Meta:
+        model = Item_Model
+
+item_schema = Item_Model_Schema()
+items_schema = Item_Model_Schema(many = True)
 
 
 
@@ -265,24 +263,60 @@ class Question_Model (db.Model):
         db.session.commit()
 
 
-class Item_Model (db.Model):
+class Question_Model_Schema (ma.ModelSchema):
+
+    items = ma.Nested(Item_Model_Schema, many = True)
+    class Meta:
+        model = Question_Model
+
+
+question_schema = Question_Model_Schema()
+questions_schema = Question_Model_Schema(many = True)
+
+
+class Survey_Model (db.Model):
+
+    __tablename__ = 'survey_model'
 
     id = db.Column(db.Integer, primary_key = True)
-    context = db.Column (db.Text , nullable = False)
-    question_id = db.Column(db.Integer, db.ForeignKey('question_model.id'), nullable=False)
-    vote_count = db.Column (db.Integer , nullable = False)
-
-    def __init__ (self , context , question_id):
-        self.context = context
-        self.question_id = question_id
-        self.vote_count = 0
+    title = db.Column (db.String(40), nullable = False)
+    description = db.Column (db.Text , nullable = False)
+    # foreign key to user
+    questions = db.relationship ('Question_Model' , backref = 'survey_model' , lazy = True)
+    is_approved = db.Column (db.Boolean , nullable = False)
+    credit = db.Column (db.Integer , nullable = False)
 
 
-    def vote (self):
-        self.vote_count += 1
+    def __init__ (self , title , description ):
+        self.title = title
+        self.description = description
+        self.is_approved = True
+        self.credit = 100
+
+    def approve (self):
+        self.is_approved = True
         db.session.commit()
 
+    def reject (self):
+        db.session.delete (self)
+        db.session.commit()
 
     def add_and_commit (self):
         db.session.add (self)
         db.session.commit()
+
+
+    @staticmethod
+    def paginate_query (per,num,error):
+        return Survey_Model.query.filter(Survey_Model.is_approved == True).paginate (per_page = per , page = num , error_out = error)
+
+
+class Survey_Model_Schema (ma.ModelSchema):
+
+    questions = ma.Nested(Question_Model_Schema, many = True)
+
+    class Meta:
+        model = Survey_Model
+
+survey_schema = Survey_Model_Schema()
+surveys_schema = Survey_Model_Schema(many = True)
