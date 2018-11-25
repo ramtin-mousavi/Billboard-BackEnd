@@ -1,0 +1,11 @@
+*.pyc
+pycache/
+*.db
+Views/
+statics/
+*.html
+*.js
+*.css
+*.jpg
+*.png
+*.ttf
