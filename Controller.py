@@ -12,10 +12,16 @@ import os
 
 
 app = Flask(__name__ , static_folder = 'statics' , template_folder = 'Views')
+<<<<<<< HEAD
 
 dir_path = os.path.dirname(os.path.realpath(__file__)).replace ("\\" , '/').split(':')[1]
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+dir_path+'/DataBase.db'
 
+||||||| merged common ancestors
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/Ramtin/Desktop/BillBoard Project/DataBase.db'
+=======
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/user/PycharmProjects/Billboard-BackEnd/DataBase.db'
+>>>>>>> 74a493dec3765ce7bbb40cf62965e5a4feb57772
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 DataBase = SQLAlchemy(app)
 MarshMallow = Marshmallow (app)
@@ -50,42 +56,79 @@ class Home :
 
 class Sign_Up :
 
+    @app.route('/api/v1/signup', methods=["POST"])
+    def sign_up_api():
+        register_form = Forms.Register_Form(request.form)
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
+        if register_form.validate():
+            if request.method == 'POST':
+                user = Model.User_Model(name, email, password)
+                user.add_and_commit()
+                return jsonify(user.serialize())
+            else:
+                return "method is not POST."
+        else:
+            if 'name' in register_form.errors:
+                return jsonify(register_form.errors['name'])
+            if 'email' in register_form.errors:
+                return jsonify(register_form.errors['email'])
+            if "password" in register_form.errors:
+                return jsonify(register_form.errors['password'])
+            if 'accept_laws' in register_form.errors:
+                jsonify(register_form.errors['accept_laws'])
+
     @staticmethod
     def sign_up ():
 
+        register_form = Forms.Register_Form(request.form)
 
-        register_form = Forms.Register_Form (request.form)
+        if register_form.validate():
+            if request.method == 'POST':
 
-        if register_form.validate ():
-            if request.method == 'POST' :
+                user = Model.User_Model(request.form['name'], request.form['email'], request.form['password'])
+                user.add_and_commit()
 
-                user = Model.User_Model (request.form['name'] , request.form['email'] , request.form['password'])
-                user.add_and_commit ()
+                flash('شما با موفقيت ثبت نام شديد')
+                flash('لطفا از منوي «ورود» اقدام به وارد شدن فرماييد')
 
-                flash ('شما با موفقيت ثبت نام شديد')
-                flash ('لطفا از منوي «ورود» اقدام به وارد شدن فرماييد')
-
-                return redirect (url_for('home_page'))
+                return redirect(url_for('home_page'))
 
             else:
-                return redirect (url_for('home_page'))
-
+                return redirect(url_for('home_page'))
 
         if 'name' in register_form.errors:
-            flash ('لطفا فيلد نام و نام خانوادگي را پر کنيد')
+            flash('لطفا فيلد نام و نام خانوادگي را پر کنيد')
         if 'email' in register_form.errors:
-            flash ('لطفا فيلد ايميل را پر کنيد')
-        if 'password' in register_form.errors  :
-            flash ('لطفا فيلدهاي پسورد را به درستي وارد کنيد')
+            flash('لطفا فيلد ايميل را پر کنيد')
+        if 'password' in register_form.errors:
+            flash('لطفا فيلدهاي پسورد را به درستي وارد کنيد')
         if 'accept_laws' in register_form.errors:
-            flash ('شما بايد با قوانين بيلبورد موافقت کنيد')
+            flash('شما بايد با قوانين بيلبورد موافقت کنيد')
 
-
-        return redirect (url_for ('home_page'))
-
+        return redirect(url_for('home_page'))
 
 
 class Login :
+
+    @app.route('/api/v1/login', methods=["POST"])
+    def login_api():
+        login_form = Forms.Login_Form (request.form)
+        username = request.form["username"]
+        password = request.form["password"]
+        if request.method == 'POST' and login_form.validate():
+            if login_form.validate():
+                stored_user = Model.User_Model.email_query (username)
+                if (stored_user is not None) and (stored_user.check_password(password)):
+                    return jsonify(stored_user.serialize())
+                else:
+                    if stored_user is None:
+                        return "user is not found or entered email is wrong."
+                    elif not stored_user.check_password(request.form['password']):
+                        return "password is incorrect."
+        else:
+            return "form is not valid or method is not POST."
 
     @staticmethod
     def login():
@@ -325,7 +368,6 @@ class Survey_Manager:
     def get_survey ():
 
 
-
         count = request.form ['questions_count']
         survey = Model.Survey_Model (request.form ['question_name'] , 'description')
         survey.add_and_commit()
@@ -340,6 +382,7 @@ class Survey_Manager:
                 new_item = Model.Item_Model (item , new_question.id)
                 new_item.add_and_commit()
 
+<<<<<<< HEAD
         flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
         return redirect (url_for("show_apps" , page_numb = 1))
 
@@ -367,7 +410,34 @@ def submit_filling():
         item = Model.Item_Model.query.get (int(request.form[key]))
         item.vote()
     return "DARYAFT SHOD"
+||||||| merged common ancestors
+        flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
+        return redirect (url_for("show_apps" , page_numb = 1))
 
+@login_required
+def show_survey(page_numb):
+    surveys = Model.Survey_Model.paginate_query (8 , page_numb , True)
+    return render_template ("surveys-list.html" , surveys = surveys)
+
+
+@login_required
+def fill_survey (id):
+
+    survey = Model.Survey_Model.query.get (id)
+    questions = survey.questions
+    return render_template ("survey-answer.html" , survey = survey , questions = questions)
+
+
+@login_required
+def submit_filling():
+    for key  in request.form:
+        item = Model.Item_Model.query.get (int(request.form[key]))
+        item.vote()
+    return "HIIII"
+=======
+>>>>>>> 74a493dec3765ce7bbb40cf62965e5a4feb57772
+
+        return "DONE"
 
 #URLs
 app.add_url_rule('/' , view_func = Home.home_page)
@@ -391,6 +461,7 @@ app.add_url_rule('/addSurvey' , view_func = Survey_Manager.add_survey)
 app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 
 
+<<<<<<< HEAD
 app.add_url_rule('/api/showSurvey' , view_func = show_survey )
 app.add_url_rule('/api/fillSurvey/<int:id>' , view_func = fill_survey )
 app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
@@ -398,13 +469,35 @@ app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET
 
 
 
+||||||| merged common ancestors
+app.add_url_rule('/showSurvey/<int:page_numb>/' , view_func = show_survey )
+app.add_url_rule('/fillSurvey/<int:id>' , view_func = fill_survey )
+app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
+
+
+
+
+=======
+>>>>>>> 74a493dec3765ce7bbb40cf62965e5a4feb57772
 
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
+<<<<<<< HEAD
     app.run (debug = False)
     #app.run ()
     #app.run (debug = True)
+||||||| merged common ancestors
+<<<<<<< HEAD
+    app.run (debug = False)
+||||||| merged common ancestors
+    app.run ()
+=======
+    app.run (debug = True)
+>>>>>>> survey
+=======
+    app.run (debug = True)
+>>>>>>> 74a493dec3765ce7bbb40cf62965e5a4feb57772
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names
