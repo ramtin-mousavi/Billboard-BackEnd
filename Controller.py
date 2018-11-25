@@ -12,16 +12,10 @@ import os
 
 
 app = Flask(__name__ , static_folder = 'statics' , template_folder = 'Views')
-<<<<<<< HEAD
 
 dir_path = os.path.dirname(os.path.realpath(__file__)).replace ("\\" , '/').split(':')[1]
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+dir_path+'/DataBase.db'
 
-||||||| merged common ancestors
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/Ramtin/Desktop/BillBoard Project/DataBase.db'
-=======
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/user/PycharmProjects/Billboard-BackEnd/DataBase.db'
->>>>>>> 74a493dec3765ce7bbb40cf62965e5a4feb57772
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 DataBase = SQLAlchemy(app)
 MarshMallow = Marshmallow (app)
@@ -358,8 +352,6 @@ class Survey_Manager:
     @login_required
     def add_survey ():
 
-
-
         return render_template ('survey.html')
 
 
@@ -382,9 +374,9 @@ class Survey_Manager:
                 new_item = Model.Item_Model (item , new_question.id)
                 new_item.add_and_commit()
 
-<<<<<<< HEAD
         flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
         return redirect (url_for("show_apps" , page_numb = 1))
+
 
 @login_required
 def show_survey():
@@ -409,35 +401,11 @@ def submit_filling():
     for key  in request.form:
         item = Model.Item_Model.query.get (int(request.form[key]))
         item.vote()
-    return "DARYAFT SHOD"
-||||||| merged common ancestors
-        flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
-        return redirect (url_for("show_apps" , page_numb = 1))
 
-@login_required
-def show_survey(page_numb):
-    surveys = Model.Survey_Model.paginate_query (8 , page_numb , True)
-    return render_template ("surveys-list.html" , surveys = surveys)
+    flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
+    return redirect (url_for("show_apps" , page_numb = 1))
 
 
-@login_required
-def fill_survey (id):
-
-    survey = Model.Survey_Model.query.get (id)
-    questions = survey.questions
-    return render_template ("survey-answer.html" , survey = survey , questions = questions)
-
-
-@login_required
-def submit_filling():
-    for key  in request.form:
-        item = Model.Item_Model.query.get (int(request.form[key]))
-        item.vote()
-    return "HIIII"
-=======
->>>>>>> 74a493dec3765ce7bbb40cf62965e5a4feb57772
-
-        return "DONE"
 
 #URLs
 app.add_url_rule('/' , view_func = Home.home_page)
@@ -461,7 +429,6 @@ app.add_url_rule('/addSurvey' , view_func = Survey_Manager.add_survey)
 app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 
 
-<<<<<<< HEAD
 app.add_url_rule('/api/showSurvey' , view_func = show_survey )
 app.add_url_rule('/api/fillSurvey/<int:id>' , view_func = fill_survey )
 app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
@@ -469,35 +436,13 @@ app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET
 
 
 
-||||||| merged common ancestors
-app.add_url_rule('/showSurvey/<int:page_numb>/' , view_func = show_survey )
-app.add_url_rule('/fillSurvey/<int:id>' , view_func = fill_survey )
-app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
 
 
-
-
-=======
->>>>>>> 74a493dec3765ce7bbb40cf62965e5a4feb57772
 
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-<<<<<<< HEAD
     app.run (debug = False)
-    #app.run ()
-    #app.run (debug = True)
-||||||| merged common ancestors
-<<<<<<< HEAD
-    app.run (debug = False)
-||||||| merged common ancestors
-    app.run ()
-=======
-    app.run (debug = True)
->>>>>>> survey
-=======
-    app.run (debug = True)
->>>>>>> 74a493dec3765ce7bbb40cf62965e5a4feb57772
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names
