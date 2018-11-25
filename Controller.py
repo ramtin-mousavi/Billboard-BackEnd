@@ -45,26 +45,34 @@ class Sign_Up :
 
     @app.route('/api/v1/signup', methods=["POST"])
     def sign_up_api():
-        register_form = Forms.Register_Form(request.form)
-        name = request.form["name"]
-        email = request.form["email"]
-        password = request.form["password"]
-        if register_form.validate():
-            if request.method == 'POST':
-                user = Model.User_Model(name, email, password)
-                user.add_and_commit()
-                return jsonify(user.serialize())
-            else:
-                return "method is not POST."
+        register_req = request.get_json()
+        name = register_req.get("name")
+        email = register_req.get("email")
+        password = register_req.get("password")
+        confirm = register_req.get("confirm")
+        accept_laws = register_req.get("accept_laws")
+        error = None
+        if register_req is None:
+            return 'request body can not be empty!'
+        if name is None:
+            error = 'username field cannot be empty!'
         else:
-            if 'name' in register_form.errors:
-                return jsonify(register_form.errors['name'])
-            if 'email' in register_form.errors:
-                return jsonify(register_form.errors['email'])
-            if "password" in register_form.errors:
-                return jsonify(register_form.errors['password'])
-            if 'accept_laws' in register_form.errors:
-                jsonify(register_form.errors['accept_laws'])
+            x = Model.User_Model.query.filter_by(name=register_req.get("name")).first()
+            if x is not None:
+                error = 'user with this email already exists!'
+        if password is None:
+            error = 'password field cannot be empty!'
+        else:
+            if not (confirm == password):
+                error = "passwords does not match"
+        if accept_laws == 'false':
+            error = 'laws should be accepted.'
+        if error is None:
+            user = Model.User_Model(name, email, password)
+            user.add_and_commit()
+            return jsonify(user.serialize())
+        else:
+            return jsonify(error)
 
     @staticmethod
     def sign_up ():
