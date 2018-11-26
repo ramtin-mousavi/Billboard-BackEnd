@@ -2,7 +2,7 @@
 
 from Models import Model
 from flask_login import login_required, login_user, logout_user , LoginManager, current_user
-from flask import Flask, flash, redirect, render_template, request, url_for , make_response, jsonify
+from flask import Flask, flash, redirect, render_template, request, url_for , make_response, jsonify , session
 from flask_sqlalchemy import SQLAlchemy
 import os
 from Forms import Forms
@@ -36,126 +36,70 @@ class Load_User:
 
 
 
-class Home :
-
-    @staticmethod
-    def home_page():
-
-        if current_user.is_authenticated:
-            return redirect (url_for('show_apps' , page_numb = 1))
-
-        return render_template('main.html')
-
-
-
 class Sign_Up :
 
-    @app.route('/api/v1/signup', methods=["POST"])
-    def sign_up_api():
-        register_form = Forms.Register_Form(request.form)
-        name = request.form["name"]
-        email = request.form["email"]
-        password = request.form["password"]
-        if register_form.validate():
-            if request.method == 'POST':
-                user = Model.User_Model(name, email, password)
-                user.add_and_commit()
-                return jsonify(user.serialize())
-            else:
-                return "method is not POST."
+    @app.route('/api/signup', methods=["POST"])
+
+    def sign_up():
+
+        if request.method == 'POST':
+
+            req = request.get_json()
+
+            name = req["name"]
+            email = req["email"]
+            password = req["password"]
+
+            new_user = Model.User_Model(name, email, password)
+            new_user.add_and_commit()
+
+            return jsonify(Model.user_model_schema.dump (new_user).data)
+
         else:
-            if 'name' in register_form.errors:
-                return jsonify(register_form.errors['name'])
-            if 'email' in register_form.errors:
-                return jsonify(register_form.errors['email'])
-            if "password" in register_form.errors:
-                return jsonify(register_form.errors['password'])
-            if 'accept_laws' in register_form.errors:
-                jsonify(register_form.errors['accept_laws'])
+            return "method is not POST"
 
-    @staticmethod
-    def sign_up ():
-
-        register_form = Forms.Register_Form(request.form)
-
-        if register_form.validate():
-            if request.method == 'POST':
-
-                user = Model.User_Model(request.form['name'], request.form['email'], request.form['password'])
-                user.add_and_commit()
-
-                flash('شما با موفقيت ثبت نام شديد')
-                flash('لطفا از منوي «ورود» اقدام به وارد شدن فرماييد')
-
-                return redirect(url_for('home_page'))
-
-            else:
-                return redirect(url_for('home_page'))
-
-        if 'name' in register_form.errors:
-            flash('لطفا فيلد نام و نام خانوادگي را پر کنيد')
-        if 'email' in register_form.errors:
-            flash('لطفا فيلد ايميل را پر کنيد')
-        if 'password' in register_form.errors:
-            flash('لطفا فيلدهاي پسورد را به درستي وارد کنيد')
-        if 'accept_laws' in register_form.errors:
-            flash('شما بايد با قوانين بيلبورد موافقت کنيد')
-
-        return redirect(url_for('home_page'))
+app.add_url_rule('/signup' , view_func = Sign_Up.sign_up , methods = ['POST' , 'GET'])
 
 
 class Login :
 
-    @app.route('/api/v1/login', methods=["POST"])
-    def login_api():
-        login_form = Forms.Login_Form (request.form)
-        username = request.form["username"]
-        password = request.form["password"]
-        if request.method == 'POST' and login_form.validate():
-            if login_form.validate():
-                stored_user = Model.User_Model.email_query (username)
-                if (stored_user is not None) and (stored_user.check_password(password)):
-                    return jsonify(stored_user.serialize())
-                else:
-                    if stored_user is None:
-                        return "user is not found or entered email is wrong."
-                    elif not stored_user.check_password(request.form['password']):
-                        return "password is incorrect."
-        else:
-            return "form is not valid or method is not POST."
-
-    @staticmethod
     def login():
 
-        login_form = Forms.Login_Form (request.form)
 
-        if request.method == 'POST' and login_form.validate():
-            if login_form.validate():
+        if request.method == 'POST' :
 
-                stored_user = Model.User_Model.email_query (request.form['username'])
+            req = request.get_json()
 
-                if (stored_user is not None) and (stored_user.check_password(request.form['password'])):
-                    login_user(stored_user)
+            username = req["username"]
+            password = req["password"]
 
-                    if stored_user.email == 'admin':
-                        return redirect (url_for ('render_admin_panel'))
+            stored_user = Model.User_Model.email_query (username)
 
-                    return redirect (url_for('show_apps' , page_numb = 1))
+            if (stored_user is not None) and (stored_user.check_password(password)):
 
+                login_user (stored_user)
+                session ['user_id'] = stored_user.id
+
+                if stored_user.email == 'admin':
+                    session ['role'] = 'user'
                 else:
-                    if stored_user is None:
-                        flash ('لطفا ايميل خود را به درستي وارد کنيد و يا از منوي ثبت نام اقدام به ثبت نام فرماييد')
+                    session ['role'] = 'admin'
 
-                    elif not stored_user.check_password(request.form['password']):
-                        flash ('لطفا پسورد خود را به درستي وارد کنيد')
-
-                    return redirect (url_for('home_page'))
-
-            flash ("لطفا اطلاعات ورود را به درستي وارد کنيد")
-            return redirect (url_for('home_page'))
-        return redirect (url_for('home_page'))
+                return jsonify(Model.user_model_schema.dump (stored_user).data)
 
 
+            else:
+                if stored_user is None:
+                    return "user is not found or entered email is wrong."
+
+                elif not stored_user.check_password(req['password']):
+                    return "password is incorrect."
+
+        else:
+            return "request is not post"
+
+
+app.add_url_rule('/api/login' , view_func = Login.login , methods = ['POST' , 'GET'])
 
 
 class Logout:
@@ -164,12 +108,15 @@ class Logout:
     def logout ():
 
         if not current_user.is_authenticated:
-            return redirect (url_for('home_page'))
+            return "you have not logged in"
 
         logout_user()
-        flash('با موفقيت خارج شديد. به اميد ديدار مجدد')
-        return render_template('main.html')
+        session.pop ('user_id', None)
+        session.pop ('role', None)
 
+        return jsonify (Model.user_model_schema.dump (current_user).data)
+
+app.add_url_rule('/api/logout' , view_func = Logout.logout)
 
 
 
@@ -178,39 +125,41 @@ class Show_Apps_Manager:
 
     @staticmethod
     @login_required
-    def show_apps (page_numb):
+    def show_apps ():
 
-        req = request.form.get ('option')
+        req = int (request.get_json()['option'])
 
-        #If User Select An Option
-        if req != None:
+        if int (req) == 3:
+            apps = Model.Android_Model.filter_query ('Game')
+            out = Model.androids_model_schema.dump (apps).data
+            return jsonify (out)
 
-            if int (req) == 3:
-                apps = Model.Android_Model.paginate_by_filter (8,page_numb,True,'Game')
-                return render_template ('profile.html', user = Load_User.load_user (current_user.id) , apps = apps)
+        elif int (req) == 2:
+            apps = Model.Android_Model.filter_query ('App')
+            out = Model.androids_model_schema.dump (apps).data
+            return jsonify (out)
 
-            elif int (req) == 2:
-                apps = Model.Android_Model.paginate_by_filter (8,page_numb,True,'App')
-                return render_template ('profile.html', user = Load_User.load_user (current_user.id) , apps = apps)
+        elif int ( req ) == 1:
+            apps = Model.Android_Model.all_query()
+            out = Model.androids_model_schema.dump (apps).data
+            return jsonify (out)
 
-            elif int ( req ) == 1:
-                apps = Model.Android_Model.paginate_query (8,page_numb,True)
-                return render_template ('profile.html', user = Load_User.load_user (current_user.id) , apps = apps)
 
-        # If No Filter
-        else:
-            apps = Model.Android_Model.paginate_query (8,page_numb,True)
-            return render_template ('profile.html', user = Load_User.load_user (current_user.id) , apps = apps)
+app.add_url_rule('/api/profile' , view_func = Show_Apps_Manager.show_apps, methods = ['POST' , 'GET'])
+
 
 
 class Show_Gifts_Manager:
 
     @staticmethod
     @login_required
-    def show_gifts (page_numb):
+    def show_gifts ():
 
-        gifts = Model.Gift_Model.paginate_query (8, page_numb, True)
-        return render_template ('giftshop.html' ,user = Load_User.load_user (current_user.id) , gifts = gifts)
+        gifts = Model.Gift_Model.query.filter(Model.Gift_Model.supply > 0)
+        out = Model.gifts_model_schema.dump (gifts).data
+        return jsonify (out)
+
+app.add_url_rule('/api/giftshop' , view_func = Show_Gifts_Manager.show_gifts )
 
 
 
@@ -219,16 +168,15 @@ class Shopping_Handler:
 
     @staticmethod
     @login_required
-    def buy_gift (id):
+    def buy_gift ():
 
-        temp_gift = Model.Gift_Model.id_query (id)
+        temp_gift = Model.Gift_Model.query.get (request.get_json()['gift_id'])
 
         if temp_gift.supply > 0:
-            user = Load_User.load_user (current_user.id)
+
+            user = Model.User_Model.query.get (session['user_id'])
 
             if user.credit > temp_gift.cost:
-
-
 
                 user.discharge (temp_gift.cost)
                 temp_gift.discharge()
@@ -238,14 +186,16 @@ class Shopping_Handler:
                 gift_history = Model.Gift_History_Model (user.id , temp_gift.id)
                 gift_history.add_and_commit()
 
-                return render_template ('giftresult.html' , gift = temp_gift)
+                return jsonify (Model.gift_history_schema.dump (gift_history).data)
 
-            flash ('اعتبار شما کافي نيست')
-            return redirect (url_for('show_apps' , page_numb = 1))
+            return "not enough credit"
 
-        return "In Gift Tamum Shode!"
+        return "gift has been finished"
+
+app.add_url_rule('/api/shoppingresult' , view_func = Shopping_Handler.buy_gift , methods = ['POST' , 'GET'])
 
 
+'''
 class Advertising :
 
     @staticmethod
@@ -277,18 +227,7 @@ class Advertising :
         #if Not Valid Form
         flash ('لطفا اطلاعات را به درستي وارد نماييد')
         return redirect (url_for('request_new_ad'))
-
-
-class Admin_Panel:
-
-    @staticmethod
-    @login_required
-    def render_admin_panel ():
-
-        if Load_User.load_user (current_user.id).email == 'admin':
-            return render_template ('adminDashboard.html')
-
-        return "Access Denied"
+'''
 
 
 
@@ -296,12 +235,13 @@ class Approve_System:
 
     @staticmethod
     @login_required
-    def get_pending_requests(page_numb):
+    def get_pending_requests():
 
-        if Load_User.load_user (current_user.id).email == 'admin':
+        if session ['role'] == 'admin':
 
-            apps = Model.Android_Model.paginate_query_for_admin (8 , page_numb , True)
-            return render_template ('adminPendingRequests.html' , apps = apps)
+            apps = Model.Android_Model.query_for_admin()
+            out = Model.androids_model_schema.dump (apps).data
+            return jsonify (out)
 
 
         return "Access Denied"
@@ -311,23 +251,29 @@ class Approve_System:
     @login_required
     def approve_or_reject (id):
 
-        app = Model.Android_Model.query.get (id)
-        if request.form ['submit'] == 'approve':
+        if request.method == 'POST':
 
-            app.approve()
-            flash ('با موفقيت تاييد شد')
-            return redirect (url_for ('get_pending_requests' , page_numb = 1))
+            req = request.get_json()
 
+            app = Model.Android_Model.query.get (int (req['app_id']))
 
-        elif request.form ['submit'] == 'reject':
+            if req ['submit'] == 'approve':
 
-            app.reject()
-            flash ('با موفقيت رد شد')
-            return redirect (url_for ('get_pending_requests' , page_numb = 1))
+                app.approve()
+                return "approved successfully"
 
 
-        else:
-            return redirect (url_for ('get_pending_requests' , page_numb = 1))
+            elif req ['submit'] == 'reject':
+
+                app.reject()
+                return "rejected successfully"
+
+
+        return "request is not post"
+
+
+app.add_url_rule('/api/getPendingRequests' , view_func = Approve_System.get_pending_requests)
+app.add_url_rule('/api/approveorreject' , view_func = Approve_System.approve_or_reject , methods = ['POST' , 'GET'])
 
 
 
@@ -335,31 +281,27 @@ class Gift_History_Manager:
 
     @staticmethod
     @login_required
-    def gift_history_handler(page_numb):
+    def gift_history_handler():
 
-        user = Load_User.load_user (current_user.id)
-        user_id = user.id
-        history = Model.Gift_History_Model.paginate_query(8, page_numb, True, user_id)
+        user_id = session ['user_id']
+        histories = Model.Gift_History_Model.query.filter_by (user_id = user_id)
+        output = Model.gifts_history_schema.dump (histories).data
+        return jsonify (output)
 
-        return render_template('NewHistory.html', history = history , user = user)
+app.add_url_rule('/api/gifthistory/' , view_func = Gift_History_Manager.gift_history_handler)
 
 
-
-import json
 class Survey_Manager:
-
-    @staticmethod
-    @login_required
-    def add_survey ():
-
-        return render_template ('survey.html')
-
 
     @staticmethod
     @login_required
     def get_survey ():
 
+        req = request.get_json()
 
+        pass
+
+'''
         count = request.form ['questions_count']
         survey = Model.Survey_Model (request.form ['question_name'] , 'description')
         survey.add_and_commit()
@@ -375,7 +317,10 @@ class Survey_Manager:
                 new_item.add_and_commit()
 
         flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
-        return redirect (url_for("show_apps" , page_numb = 1))
+        return redirect (url_for("show_apps" , page_numb = 1))'''
+
+app.add_url_rule('/api/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
+
 
 
 @login_required
@@ -386,6 +331,8 @@ def show_survey():
 
     return jsonify (output)
 
+app.add_url_rule('/api/showSurvey' , view_func = show_survey )
+
 
 @login_required
 def fill_survey (id):
@@ -395,43 +342,33 @@ def fill_survey (id):
 
     return jsonify (output)
 
+app.add_url_rule('/api/fillSurvey/<int:id>' , view_func = fill_survey )
+
 
 @login_required
 def submit_filling():
-    for key  in request.form:
-        item = Model.Item_Model.query.get (int(request.form[key]))
+    req = request.get_json()
+    for key  in req
+        item = Model.Item_Model.query.get (int(req[key]))
         item.vote()
 
-    flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
-    return redirect (url_for("show_apps" , page_numb = 1))
+    return "voted successfully"
+
+app.add_url_rule('/api/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
+
 
 
 
 #URLs
-app.add_url_rule('/' , view_func = Home.home_page)
-app.add_url_rule('/signUp' , view_func = Sign_Up.sign_up , methods = ['POST' , 'GET'])
-app.add_url_rule('/login' , view_func = Login.login , methods = ['POST' , 'GET'])
-app.add_url_rule('/logout' , view_func = Logout.logout)
-app.add_url_rule('/profile/<int:page_numb>/' , view_func = Show_Apps_Manager.show_apps, methods = ['POST' , 'GET'])
-app.add_url_rule('/giftshop/<int:page_numb>/' , view_func = Show_Gifts_Manager.show_gifts )
-app.add_url_rule('/shoppingresult/<int:id>/' , view_func = Shopping_Handler.buy_gift , methods = ['POST' , 'GET'])
-app.add_url_rule('/addad',view_func=Advertising.request_new_ad)
-app.add_url_rule('/submitadd' , view_func = Advertising.submit_new_ad , methods = ['POST' , 'GET'])
-app.add_url_rule('/adminpanel' , view_func = Admin_Panel.render_admin_panel)
-app.add_url_rule('/getPendingRequests/<int:page_numb>' , view_func = Approve_System.get_pending_requests)
-app.add_url_rule('/approveorreject/<int:id>' , view_func = Approve_System.approve_or_reject , methods = ['POST' , 'GET'])
+    #app.add_url_rule('/addad',view_func=Advertising.request_new_ad)
+    #app.add_url_rule('/submitadd' , view_func = Advertising.submit_new_ad , methods = ['POST' , 'GET'])
     #app.add_url_rule('/addhistory' , view_func = Download_History_Manager.add_history , methods = ['POST' , 'GET'])
     #app.add_url_rule('/getconfirminstalllist/<int:page_numb>' , view_func = Download_History_Manager.get_confirm_install_list )
     #app.add_url_rule('/addcredit' , view_func = Credit_Manager.add_credit , methods = ['POST' , 'GET'])
     #app.add_url_rule('/revertactions/<appName>' , view_func = Credit_Manager.revert_actions)
-app.add_url_rule('/gifthistory/<int:page_numb>/' , view_func = Gift_History_Manager.gift_history_handler)
-app.add_url_rule('/addSurvey' , view_func = Survey_Manager.add_survey)
-app.add_url_rule('/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 
 
-app.add_url_rule('/api/showSurvey' , view_func = show_survey )
-app.add_url_rule('/api/fillSurvey/<int:id>' , view_func = fill_survey )
-app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
+
 
 
 
@@ -442,7 +379,7 @@ app.add_url_rule('/submitFilling' , view_func = submit_filling , methods = ['GET
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run (debug = False)
+    app.run (debug = True)
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names

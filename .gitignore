@@ -9,3 +9,4 @@ statics/
 *.jpg
 *.png
 *.ttf
+Forms/pycache/

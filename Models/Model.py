@@ -55,12 +55,16 @@ class User_Model (db.Model, UserMixin):
         self.credit += cost
         db.session.commit()
 
-    def serialize(self):
-        return {
-            "name": self.name,
-            "email": self.email,
-            "credit": self.credit
-        }
+
+class User_Model_Schema (ma.ModelSchema):
+    class Meta:
+        model = User_Model
+        exclude = ('pass_hash',)
+
+user_model_schema = User_Model_Schema()
+users_model_schema = User_Model_Schema(many = True)
+
+
 
 
 
@@ -117,24 +121,27 @@ class Android_Model (db.Model):
 
 
     @staticmethod
-    def paginate_query (per,num,error):
-        return Android_Model.query.filter(Android_Model.is_approved == True).paginate (per_page = per , page = num , error_out = error)
-
-    @staticmethod
     def all_query ():
         return Android_Model.query.filter (Android_Model.is_approved == True)
-
-    @staticmethod
-    def paginate_by_filter (per,num,error, fil):
-        return Android_Model.query.filter_by (category = fil , is_approved = True).paginate (per_page = per , page = num , error_out = error)
 
     @staticmethod
     def filter_query (fil):
         return Android_Model.query.filter_by (category = fil , is_approved = True)
 
+
     @staticmethod
-    def paginate_query_for_admin (per,num,error):
-        return Android_Model.query.filter (Android_Model.is_approved == False).paginate (per_page = per , page = num , error_out = error)
+    def query_for_admin ():
+        return Android_Model.query.filter (Android_Model.is_approved == False)
+
+
+class Android_Model_Schema (ma.ModelSchema):
+    class Meta:
+        model = Android_Model
+        exclude = ('is_approved',)
+
+
+android_model_schema = Android_Model_Schema()
+androids_model_schema = Android_Model_Schema(many = True)
 
 
 
@@ -148,8 +155,6 @@ class Gift_Model (db.Model):
     cost = db.Column (db.Integer)
 
 
-
-
     def __init__ (self,name,icon,code,description , supply, cost , user_id = None):
         self.name = name
         self.icon = icon
@@ -157,8 +162,6 @@ class Gift_Model (db.Model):
         self.supply = supply
         self.cost = cost
         self.code = code
-
-
 
 
     def discharge (self):
@@ -172,13 +175,12 @@ class Gift_Model (db.Model):
 
 
 
-    @staticmethod
-    def paginate_query (per,num,error):
-        return Gift_Model.query.filter(Gift_Model.supply > 0).paginate (per_page = per , page = num , error_out = error)
+class Gift_Model_Schema (ma.ModelSchema):
+    class Meta:
+        model = Gift_Model
 
-    @staticmethod
-    def id_query (Id):
-        return Gift_Model.query.get (Id)
+gift_model_schema = Gift_Model_Schema()
+gifts_model_schema = Gift_Model_Schema(many = True)
 
 
 
@@ -204,11 +206,12 @@ class Gift_History_Model (db.Model):
         db.session.add (self)
         db.session.commit()
 
+class Gift_History_Model_Schema (ma.ModelSchema) :
+    class Meta:
+        model = Gift_History_Model
 
-    @staticmethod
-    def paginate_query(per, num, error, user_id):
-        return Gift_History_Model.query.filter_by(user_id = user_id).paginate(per_page=per, page=num, error_out=error)
-
+gift_history_schema = Gift_History_Model_Schema()
+gifts_history_schema = Gift_History_Model_Schema(many = True)
 
 
 
