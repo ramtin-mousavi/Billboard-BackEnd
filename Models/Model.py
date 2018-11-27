@@ -56,14 +56,19 @@ class User_Model (db.Model, UserMixin):
         db.session.commit()
 
 
+    def serialize_one (self):
+        return User_Model_Schema().dump(self).data
+
+    @staticmethod
+    def serialize_many (arg):
+        return User_Model_Schema(many = True).dump (arg).data
+
+
+
 class User_Model_Schema (ma.ModelSchema):
     class Meta:
         model = User_Model
         exclude = ('pass_hash',)
-
-user_model_schema = User_Model_Schema()
-users_model_schema = User_Model_Schema(many = True)
-
 
 
 
@@ -134,14 +139,19 @@ class Android_Model (db.Model):
         return Android_Model.query.filter (Android_Model.is_approved == False)
 
 
+    def serialize_one (self):
+        return Android_Model_Schema().dump(self).data
+
+    @staticmethod
+    def serialize_many (arg):
+        return Android_Model_Schema(many = True).dump (arg).data
+
+
 class Android_Model_Schema (ma.ModelSchema):
     class Meta:
         model = Android_Model
         exclude = ('is_approved',)
 
-
-android_model_schema = Android_Model_Schema()
-androids_model_schema = Android_Model_Schema(many = True)
 
 
 
@@ -174,14 +184,18 @@ class Gift_Model (db.Model):
         db.session.commit()
 
 
+    def serialize_one (self):
+        return Gift_Model_Schema().dump(self).data
+
+    @staticmethod
+    def serialize_many (arg):
+        return Gift_Model_Schema(many = True).dump (arg).data
+
+
 
 class Gift_Model_Schema (ma.ModelSchema):
     class Meta:
         model = Gift_Model
-
-gift_model_schema = Gift_Model_Schema()
-gifts_model_schema = Gift_Model_Schema(many = True)
-
 
 
 
@@ -206,12 +220,18 @@ class Gift_History_Model (db.Model):
         db.session.add (self)
         db.session.commit()
 
+
+    def serialize_one (self):
+        return Gift_History_Model_Schema().dump(self).data
+
+    @staticmethod
+    def serialize_many (arg):
+        return Gift_History_Model_Schema(many = True).dump (arg).data
+
+
 class Gift_History_Model_Schema (ma.ModelSchema) :
     class Meta:
         model = Gift_History_Model
-
-gift_history_schema = Gift_History_Model_Schema()
-gifts_history_schema = Gift_History_Model_Schema(many = True)
 
 
 
@@ -237,13 +257,20 @@ class Item_Model (db.Model):
         db.session.add (self)
         db.session.commit()
 
+
+    def serialize_one (self):
+        return Item_Model_Schema().dump(self).data
+
+    @staticmethod
+    def serialize_many (arg):
+        return Item_Model_Schema(many = True).dump (arg).data
+
+
 class Item_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Item_Model
 
-item_schema = Item_Model_Schema()
-items_schema = Item_Model_Schema(many = True)
 
 
 
@@ -266,6 +293,15 @@ class Question_Model (db.Model):
         db.session.commit()
 
 
+    def serialize_one (self):
+        return Question_Model_Schema().dump(self).data
+
+    @staticmethod
+    def serialize_many (arg):
+        return Question_Model_Schema(many = True).dump (arg).data
+
+
+
 class Question_Model_Schema (ma.ModelSchema):
 
     items = ma.Nested(Item_Model_Schema, many = True)
@@ -273,8 +309,6 @@ class Question_Model_Schema (ma.ModelSchema):
         model = Question_Model
 
 
-question_schema = Question_Model_Schema()
-questions_schema = Question_Model_Schema(many = True)
 
 
 class Survey_Model (db.Model):
@@ -309,9 +343,13 @@ class Survey_Model (db.Model):
         db.session.commit()
 
 
+    def serialize_one (self):
+        return Survey_Model_Schema().dump(self).data
+
     @staticmethod
-    def paginate_query (per,num,error):
-        return Survey_Model.query.filter(Survey_Model.is_approved == True).paginate (per_page = per , page = num , error_out = error)
+    def serialize_many (arg):
+        return Survey_Model_Schema(many = True).dump (arg).data
+
 
 
 class Survey_Model_Schema (ma.ModelSchema):
@@ -320,6 +358,3 @@ class Survey_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Survey_Model
-
-survey_schema = Survey_Model_Schema()
-surveys_schema = Survey_Model_Schema(many = True)
