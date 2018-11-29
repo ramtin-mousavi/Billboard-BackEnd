@@ -29,9 +29,6 @@ login_manager.login_view = 'login'
 
 
 
-
-
-
 class Sign_Up :
 
     def sign_up():
@@ -104,18 +101,16 @@ class Logout:
     @staticmethod
     def logout ():
 
-        if not current_user.is_authenticated:
-            return "you have not logged in"
+        current_user = Model.User_Model.query.get (session ['user_id'])
 
         logout_user()
         session.pop ('user_id', None)
         role = session.pop ('role', None)
 
-        out = {'user':Model.user_model_schema.dump (current_user).data , 'role':role, 'status':'OK'}
+        out = {'user': current_user.serialize_one() , 'role':role, 'status':'OK'}
         return jsonify (out)
 
 app.add_url_rule('/api/logout' , view_func = Logout.logout)
-
 
 
 
