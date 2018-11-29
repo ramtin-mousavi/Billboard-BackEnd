@@ -24,13 +24,19 @@ class User_Model (db.Model, UserMixin):
     email = db.Column(db.String(50), unique=True , nullable = False)
     pass_hash = db.Column(db.String(54))
     credit = db.Column (db.Integer)
+    role = db.Column (db.String (10) , nullable = False)
 
 
-    def __init__ (self , name , email , password):
-        self.name = name
-        self.email = email.lower()
-        self.pass_hash = generate_password_hash (password)
-        self.credit = 2000
+    def __init__ (self , name , email , password, role):
+
+        if role in ['user', 'admin']:
+            self.name = name
+            self.email = email.lower()
+            self.pass_hash = generate_password_hash (password)
+            self.credit = 2000
+
+        else:
+            raise ValueError()
 
 
     def add_and_commit (self):
