@@ -6,8 +6,14 @@ from Models import Model
 from Controller import app
 from Controller import DataBase as db
 from flask_script import Manager, prompt_bool
+from flask_apidoc.commands import GenerateApiDoc
+
 
 manager = Manager(app)
+
+
+manager.add_command('apidoc', GenerateApiDoc())
+
 
 @manager.command
 def initdb():

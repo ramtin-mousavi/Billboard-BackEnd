@@ -50,67 +50,6 @@ class Sign_Up :
             out = {'user':new_user.serialize_one() , 'status':'OK'}
             return jsonify(out)
 
-<<<<<<< HEAD
-||||||| merged common ancestors
-    @app.route('/api/v1/signup', methods=["POST"])
-    def sign_up_api():
-        register_form = Forms.Register_Form(request.form)
-        name = request.form["name"]
-        email = request.form["email"]
-        password = request.form["password"]
-        if register_form.validate():
-            if request.method == 'POST':
-                user = Model.User_Model(name, email, password)
-                user.add_and_commit()
-                return jsonify(user.serialize())
-            else:
-                return "method is not POST."
-=======
-    @app.route('/api/v1/signup', methods=["POST"])
-    def sign_up_api():
-        register_req = request.get_json()
-        name = register_req.get("name")
-        email = register_req.get("email")
-        password = register_req.get("password")
-        confirm = register_req.get("confirm")
-        accept_laws = register_req.get("accept_laws")
-        error = None
-        if register_req is None:
-            return 'request body can not be empty!'
-        if name is None:
-            error = 'username field cannot be empty!'
-        else:
-            x = Model.User_Model.query.filter_by(name=register_req.get("name")).first()
-            if x is not None:
-                error = 'user with this email already exists!'
-        if password is None:
-            error = 'password field cannot be empty!'
-        else:
-            if not (confirm == password):
-                error = "passwords does not match"
-        if accept_laws == 'false':
-            error = 'laws should be accepted.'
-        if error is None:
-            user = Model.User_Model(name, email, password)
-            user.add_and_commit()
-            return jsonify(user.serialize())
->>>>>>> 086857b1e45e94e30f6e3a3698cef238bc42a2cd
-        else:
-<<<<<<< HEAD
-            out = {'user':'', 'status':"method is not POST"}
-            return jsonify (out)
-||||||| merged common ancestors
-            if 'name' in register_form.errors:
-                return jsonify(register_form.errors['name'])
-            if 'email' in register_form.errors:
-                return jsonify(register_form.errors['email'])
-            if "password" in register_form.errors:
-                return jsonify(register_form.errors['password'])
-            if 'accept_laws' in register_form.errors:
-                jsonify(register_form.errors['accept_laws'])
-=======
-            return jsonify(error)
->>>>>>> 086857b1e45e94e30f6e3a3698cef238bc42a2cd
 
 app.add_url_rule('/api/signup' , view_func = Sign_Up.sign_up , methods = ['POST' , 'GET'])
 
@@ -118,7 +57,6 @@ app.add_url_rule('/api/signup' , view_func = Sign_Up.sign_up , methods = ['POST'
 class Login :
 
     def login():
-
 
         if request.method == 'POST' :
 
@@ -134,78 +72,14 @@ class Login :
                 login_user (stored_user)
                 session ['user_id'] = stored_user.id
 
-<<<<<<< HEAD
                 if stored_user.email == 'admin':
                     session ['role'] = 'admin'
                     out = {'user':stored_user.serialize_one() , 'role':'admin', 'status':'OK'}
                 else:
                     session ['role'] = 'user'
                     out = {'user':stored_user.serialize_one() , 'role':'user', 'status':'OK'}
-||||||| merged common ancestors
-    @app.route('/api/v1/login', methods=["POST"])
-    def login_api():
-        login_form = Forms.Login_Form (request.form)
-        username = request.form["username"]
-        password = request.form["password"]
-        if request.method == 'POST' and login_form.validate():
-            if login_form.validate():
-                stored_user = Model.User_Model.email_query (username)
-                if (stored_user is not None) and (stored_user.check_password(password)):
-                    return jsonify(stored_user.serialize())
-                else:
-                    if stored_user is None:
-                        return "user is not found or entered email is wrong."
-                    elif not stored_user.check_password(request.form['password']):
-                        return "password is incorrect."
-        else:
-            return "form is not valid or method is not POST."
 
-    @staticmethod
-    def login():
-
-        login_form = Forms.Login_Form (request.form)
-
-        if request.method == 'POST' and login_form.validate():
-            if login_form.validate():
-
-                stored_user = Model.User_Model.email_query (request.form['username'])
-=======
-    @app.route('/api/v1/login', methods=["POST"])
-    def login_api():
-        register_req = request.get_json()
-        username = register_req.get("username")
-        password = register_req.get("password")
-        error = None
-        if register_req is None:
-            return 'request body can not be empty!'
-        if username is None:
-            error = 'username field cannot be empty!'
-        if password is None:
-            error = 'password field cannot be empty!'
-        if error is None:
-            stored_user = Model.User_Model.email_query(username)
-            if (stored_user is not None) and (stored_user.check_password(password)):
-                return jsonify(stored_user.serialize())
-            else:
-                if stored_user is None:
-                    return "user is not found or entered email is wrong."
-                elif not stored_user.check_password(request.form['password']):
-                    return "password is incorrect."
-        else:
-            return jsonify(error)
-
-    @staticmethod
-    def login():
-
-        login_form = Forms.Login_Form (request.form)
-
-        if request.method == 'POST' and login_form.validate():
-            if login_form.validate():
-
-                stored_user = Model.User_Model.email_query (request.form['username'])
->>>>>>> 086857b1e45e94e30f6e3a3698cef238bc42a2cd
-
-                return jsonify(out)
+                return jsonify (out)
 
 
             else:
@@ -328,41 +202,6 @@ class Shopping_Handler:
 
 
 app.add_url_rule('/api/shoppingresult/<int:gift_id>' , view_func = Shopping_Handler.buy_gift , methods = ['POST' , 'GET'])
-
-
-'''
-class Advertising :
-
-    @staticmethod
-    @login_required
-    def request_new_ad ():
-
-        return render_template ('submitAd.html')
-
-
-    @staticmethod
-    @login_required
-    def submit_new_ad ():
-
-        submit_form = Forms.Submit_Form (request.form)
-
-        if submit_form.validate ():
-            if request.method == 'POST' :
-
-                new_app = Model.Android_Model (request.form ['name'] , request.form ['iconlink'] , 'App' , 100 , request.form ['dllink'] , request.form ['deeplink'] ,
-                                       request.form ['company'] , request.form ['email'] , request.form ['phone'] )
-                new_app.add_and_commit ()
-                flash ('آگهي شما ثبت شد و پس از تاييد در سايت قرار داده خواهد شد')
-
-                return redirect (url_for ('show_apps' , page_numb = 1))
-
-            #if GET
-            return redirect (url_for ('request_new_ad'))
-
-        #if Not Valid Form
-        flash ('لطفا اطلاعات را به درستي وارد نماييد')
-        return redirect (url_for('request_new_ad'))
-'''
 
 
 
