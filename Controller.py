@@ -41,11 +41,14 @@ class Sign_Up :
             email = req["email"]
             password = req["password"]
 
-            new_user = Model.User_Model(name, email, password)
+            new_user = Model.User_Model(name, email, password,'user')
             new_user.add_and_commit()
 
             out = {'user':new_user.serialize_one() , 'status':'OK'}
             return jsonify(out)
+
+        out = {'user':'', 'status':'method is not POST'}
+        return jsonify (out)
 
 
 app.add_url_rule('/api/signup' , view_func = Sign_Up.sign_up , methods = ['POST' , 'GET'])
@@ -68,28 +71,24 @@ class Login :
 
                 login_user (stored_user)
                 session ['user_id'] = stored_user.id
+                session ['role'] = stored_user.role
 
-                if stored_user.email == 'admin':
-                    session ['role'] = 'admin'
-                    out = {'user':stored_user.serialize_one() , 'role':'admin', 'status':'OK'}
-                else:
-                    session ['role'] = 'user'
-                    out = {'user':stored_user.serialize_one() , 'role':'user', 'status':'OK'}
+                out = {'user':stored_user.serialize_one(), 'status':'OK'}
 
                 return jsonify (out)
 
 
             else:
                 if stored_user is None:
-                    out = {'user':'', 'role':'', 'status':'user not found'}
+                    out = {'user':'', 'status':'user not found'}
                     return jsonify (out)
 
                 elif not stored_user.check_password(req['password']):
-                    out = {'user':'' , 'role':'', 'status':'password incorrect'}
+                    out = {'user':'' , 'status':'password incorrect'}
                     return jsonify (out)
 
         else:
-            out = {'user':'','role':'','status':'method is not POST'}
+            out = {'user':'', 'status':'method is not POST'}
             return jsonify (out)
 
 
@@ -105,9 +104,9 @@ class Logout:
 
         logout_user()
         session.pop ('user_id', None)
-        role = session.pop ('role', None)
+        session.pop ('role', None)
 
-        out = {'user': current_user.serialize_one() , 'role':role, 'status':'OK'}
+        out = {'user': current_user.serialize_one(), 'status':'OK'}
         return jsonify (out)
 
 app.add_url_rule('/api/logout' , view_func = Logout.logout)
@@ -136,6 +135,9 @@ class Show_Apps_Manager:
                 out = {'apps':Model.Android_Model.serialize_many (apps) , 'status': 'OK'}
                 return jsonify (out)
 
+            else:
+                out = {'apps':'', 'status':'filter is not valid'}
+                return jsonify (out)
 
         apps = Model.Android_Model.all_query()
         out = {'apps':Model.Android_Model.serialize_many (apps) , 'status': 'OK'}
