@@ -13,6 +13,7 @@ import os
 
 app = Flask(__name__ , static_folder = 'statics' , template_folder = 'Views')
 
+
 dir_path = os.path.dirname(os.path.realpath(__file__)).replace ("\\" , '/').split(':')[1]
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+dir_path+'/DataBase.db'
 
@@ -27,18 +28,11 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
-class Load_User:
 
-    @staticmethod
-    @login_manager.user_loader
-    def load_user(userid):
-        return Model.User_Model.query.get(int(userid))
 
 
 
 class Sign_Up :
-
-    @app.route('/api/signup', methods=["POST"])
 
     def sign_up():
 
@@ -53,12 +47,14 @@ class Sign_Up :
             new_user = Model.User_Model(name, email, password)
             new_user.add_and_commit()
 
-            return jsonify(Model.user_model_schema.dump (new_user).data)
+            out = {'user':new_user.serialize_one() , 'status':'OK'}
+            return jsonify(out)
 
         else:
-            return "method is not POST"
+            out = {'user':'', 'status':"method is not POST"}
+            return jsonify (out)
 
-app.add_url_rule('/signup' , view_func = Sign_Up.sign_up , methods = ['POST' , 'GET'])
+app.add_url_rule('/api/signup' , view_func = Sign_Up.sign_up , methods = ['POST' , 'GET'])
 
 
 class Login :
@@ -70,10 +66,10 @@ class Login :
 
             req = request.get_json()
 
-            username = req["username"]
+            email = req["email"]
             password = req["password"]
 
-            stored_user = Model.User_Model.email_query (username)
+            stored_user = Model.User_Model.email_query (email)
 
             if (stored_user is not None) and (stored_user.check_password(password)):
 
@@ -81,22 +77,27 @@ class Login :
                 session ['user_id'] = stored_user.id
 
                 if stored_user.email == 'admin':
-                    session ['role'] = 'user'
-                else:
                     session ['role'] = 'admin'
+                    out = {'user':stored_user.serialize_one() , 'role':'admin', 'status':'OK'}
+                else:
+                    session ['role'] = 'user'
+                    out = {'user':stored_user.serialize_one() , 'role':'user', 'status':'OK'}
 
-                return jsonify(Model.user_model_schema.dump (stored_user).data)
+                return jsonify(out)
 
 
             else:
                 if stored_user is None:
-                    return "user is not found or entered email is wrong."
+                    out = {'user':'', 'role':'', 'status':'user not found'}
+                    return jsonify (out)
 
                 elif not stored_user.check_password(req['password']):
-                    return "password is incorrect."
+                    out = {'user':'' , 'role':'', 'status':'password incorrect'}
+                    return jsonify (out)
 
         else:
-            return "request is not post"
+            out = {'user':'','role':'','status':'method is not POST'}
+            return jsonify (out)
 
 
 app.add_url_rule('/api/login' , view_func = Login.login , methods = ['POST' , 'GET'])
@@ -112,9 +113,10 @@ class Logout:
 
         logout_user()
         session.pop ('user_id', None)
-        session.pop ('role', None)
+        role = session.pop ('role', None)
 
-        return jsonify (Model.user_model_schema.dump (current_user).data)
+        out = {'user':Model.user_model_schema.dump (current_user).data , 'role':role, 'status':'OK'}
+        return jsonify (out)
 
 app.add_url_rule('/api/logout' , view_func = Logout.logout)
 
@@ -125,27 +127,32 @@ class Show_Apps_Manager:
 
     @staticmethod
     @login_required
-    def show_apps ():
+    def show_apps (filter=None):
 
-        req = int (request.get_json()['option'])
+        if filter:
+            if int (filter) == 3:
+                apps = Model.Android_Model.filter_query ('Game')
+                out = {'apps':Model.Android_Model.serialize_many (apps) , 'status': 'OK'}
+                return jsonify (out)
 
-        if int (req) == 3:
-            apps = Model.Android_Model.filter_query ('Game')
-            out = Model.androids_model_schema.dump (apps).data
-            return jsonify (out)
+            elif int (filter) == 2:
+                apps = Model.Android_Model.filter_query ('App')
+                out = {'apps':Model.Android_Model.serialize_many (apps) , 'status': 'OK'}
+                return jsonify (out)
 
-        elif int (req) == 2:
-            apps = Model.Android_Model.filter_query ('App')
-            out = Model.androids_model_schema.dump (apps).data
-            return jsonify (out)
-
-        elif int ( req ) == 1:
-            apps = Model.Android_Model.all_query()
-            out = Model.androids_model_schema.dump (apps).data
-            return jsonify (out)
+            elif int (filter) == 1:
+                apps = Model.Android_Model.all_query()
+                out = {'apps':Model.Android_Model.serialize_many (apps) , 'status': 'OK'}
+                return jsonify (out)
 
 
-app.add_url_rule('/api/profile' , view_func = Show_Apps_Manager.show_apps, methods = ['POST' , 'GET'])
+        apps = Model.Android_Model.all_query()
+        out = {'apps':Model.Android_Model.serialize_many (apps) , 'status': 'OK'}
+        return jsonify (out)
+
+
+app.add_url_rule('/api/showApps/<int:filter>' , view_func = Show_Apps_Manager.show_apps)
+app.add_url_rule('/api/showApps/' , view_func = Show_Apps_Manager.show_apps)
 
 
 
@@ -156,7 +163,7 @@ class Show_Gifts_Manager:
     def show_gifts ():
 
         gifts = Model.Gift_Model.query.filter(Model.Gift_Model.supply > 0)
-        out = Model.gifts_model_schema.dump (gifts).data
+        out = {'gifts':Model.Gift_Model.serialize_many(gifts), 'status':'OK'}
         return jsonify (out)
 
 app.add_url_rule('/api/giftshop' , view_func = Show_Gifts_Manager.show_gifts )
@@ -168,31 +175,37 @@ class Shopping_Handler:
 
     @staticmethod
     @login_required
-    def buy_gift ():
+    def buy_gift (gift_id):
 
-        temp_gift = Model.Gift_Model.query.get (request.get_json()['gift_id'])
+        temp_gift = Model.Gift_Model.query.get (int(gift_id))
+        if temp_gift:
+            if temp_gift.supply > 0:
 
-        if temp_gift.supply > 0:
+                user = Model.User_Model.query.get (session['user_id'])
 
-            user = Model.User_Model.query.get (session['user_id'])
+                if user.credit > temp_gift.cost:
 
-            if user.credit > temp_gift.cost:
+                    user.discharge (temp_gift.cost)
+                    temp_gift.discharge()
 
-                user.discharge (temp_gift.cost)
-                temp_gift.discharge()
+                    #Save Transaction Record
+                    gift_history = Model.Gift_History_Model (user.id , temp_gift.id)
+                    gift_history.add_and_commit()
+
+                    out = {'user':user.serialize_one(),'record':gift_history.serialize_one(),'status':'OK'}
+                    return jsonify (out)
+
+                out = {'user':user.serialize_one(),'record':'','status':'not enough credit'}
+                return jsonify (out)
+
+            out = {'user':user.serialize_one(),'record':'','status':'gift has been finished'}
+            return jsonify (out)
+
+        out = {'user':user.serialize_one(),'record':'','status':'wrong gift id'}
+        return jsonify (out)
 
 
-                #Save Transaction Record
-                gift_history = Model.Gift_History_Model (user.id , temp_gift.id)
-                gift_history.add_and_commit()
-
-                return jsonify (Model.gift_history_schema.dump (gift_history).data)
-
-            return "not enough credit"
-
-        return "gift has been finished"
-
-app.add_url_rule('/api/shoppingresult' , view_func = Shopping_Handler.buy_gift , methods = ['POST' , 'GET'])
+app.add_url_rule('/api/shoppingresult/<int:gift_id>' , view_func = Shopping_Handler.buy_gift , methods = ['POST' , 'GET'])
 
 
 '''
@@ -240,40 +253,37 @@ class Approve_System:
         if session ['role'] == 'admin':
 
             apps = Model.Android_Model.query_for_admin()
-            out = Model.androids_model_schema.dump (apps).data
+            out = {'apps':Model.Android_Model.serialize_many(apps), 'status':'OK'}
             return jsonify (out)
 
 
-        return "Access Denied"
+        out = {'apps':'', 'status':'asscess denied'}
+        return jsonify(out)
 
 
     @staticmethod
     @login_required
-    def approve_or_reject (id):
+    def approve_or_reject (submit , app_id):
 
-        if request.method == 'POST':
+        app = Model.Android_Model.query.get (int (app_id))
 
-            req = request.get_json()
+        if submit == 'approve':
 
-            app = Model.Android_Model.query.get (int (req['app_id']))
-
-            if req ['submit'] == 'approve':
-
-                app.approve()
-                return "approved successfully"
+            app.approve()
+            out = {'app':app.serialize_one() ,'submit':'approve','status':'OK'}
+            return jsonify (out)
 
 
-            elif req ['submit'] == 'reject':
+        elif submit == 'reject':
 
-                app.reject()
-                return "rejected successfully"
+            app.reject()
+            out = {'app':app.serialize_one() ,'submit':'reject','status':'OK'}
+            return jsonify (out)
 
-
-        return "request is not post"
 
 
 app.add_url_rule('/api/getPendingRequests' , view_func = Approve_System.get_pending_requests)
-app.add_url_rule('/api/approveorreject' , view_func = Approve_System.approve_or_reject , methods = ['POST' , 'GET'])
+app.add_url_rule('/api/approveorreject/<string:submit>/<int:app_id>' , view_func = Approve_System.approve_or_reject )
 
 
 
@@ -285,8 +295,8 @@ class Gift_History_Manager:
 
         user_id = session ['user_id']
         histories = Model.Gift_History_Model.query.filter_by (user_id = user_id)
-        output = Model.gifts_history_schema.dump (histories).data
-        return jsonify (output)
+        out = {'history':Model.Gift_History_Model.serialize_many(histories), 'status':'OK'}
+        return jsonify (out)
 
 app.add_url_rule('/api/gifthistory/' , view_func = Gift_History_Manager.gift_history_handler)
 
@@ -299,25 +309,28 @@ class Survey_Manager:
 
         req = request.get_json()
 
-        pass
+        title = req ['name']
+        description = req ['description']
+        survey_questions = req ['questions']
 
-'''
-        count = request.form ['questions_count']
-        survey = Model.Survey_Model (request.form ['question_name'] , 'description')
-        survey.add_and_commit()
+        new_survey = Model.Survey_Model (title, description)
+        new_survey.add_and_commit()
 
-        for question_number in range (int(count)):
+        for question in survey_questions:
+            question_context = question ['context']
+            question_items = question ['items']
 
-            new_question = Model.Question_Model (request.form ['q'+str(question_number)] , survey.id)
+            new_question = Model.Question_Model (question_context, new_survey.id)
             new_question.add_and_commit()
 
-            for item in request.form.getlist('item'+str(question_number)):
+            for item in question_items:
+                item_context = item ['context']
+                new_item = Model.Item_Model (item_context, new_question.id)
 
-                new_item = Model.Item_Model (item , new_question.id)
-                new_item.add_and_commit()
+        out = {'status':'OK'}
 
-        flash ('فرم نظر سنجی شما با موفقیت دریافت شد')
-        return redirect (url_for("show_apps" , page_numb = 1))'''
+        return jsonify (out)
+
 
 app.add_url_rule('/api/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 
@@ -327,9 +340,8 @@ app.add_url_rule('/api/getSurvey' , view_func = Survey_Manager.get_survey , meth
 def show_survey():
 
     surveys = Model.Survey_Model.query.all()
-    output = Model.surveys_schema.dump (surveys).data
-
-    return jsonify (output)
+    out = {'surveys':Model.Survey_Model.serialize_many(surveys),'status':'OK'}
+    return jsonify (out)
 
 app.add_url_rule('/api/showSurvey' , view_func = show_survey )
 
@@ -338,9 +350,9 @@ app.add_url_rule('/api/showSurvey' , view_func = show_survey )
 def fill_survey (id):
 
     survey = Model.Survey_Model.query.get (id)
-    output = Model.survey_schema.dump (survey).data
+    out = {'survey':survey.serialize_one(), 'status':'OK'}
 
-    return jsonify (output)
+    return jsonify (out)
 
 app.add_url_rule('/api/fillSurvey/<int:id>' , view_func = fill_survey )
 
@@ -348,30 +360,16 @@ app.add_url_rule('/api/fillSurvey/<int:id>' , view_func = fill_survey )
 @login_required
 def submit_filling():
     req = request.get_json()
-    for key  in req
+    #req is a dict of selected items
+    #which each value in this dic, is item's primary_key (id)
+    for key  in req:
         item = Model.Item_Model.query.get (int(req[key]))
         item.vote()
 
-    return "voted successfully"
+    out = {'status':'OK'}
+    return jsonify (out)
 
 app.add_url_rule('/api/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
-
-
-
-
-#URLs
-    #app.add_url_rule('/addad',view_func=Advertising.request_new_ad)
-    #app.add_url_rule('/submitadd' , view_func = Advertising.submit_new_ad , methods = ['POST' , 'GET'])
-    #app.add_url_rule('/addhistory' , view_func = Download_History_Manager.add_history , methods = ['POST' , 'GET'])
-    #app.add_url_rule('/getconfirminstalllist/<int:page_numb>' , view_func = Download_History_Manager.get_confirm_install_list )
-    #app.add_url_rule('/addcredit' , view_func = Credit_Manager.add_credit , methods = ['POST' , 'GET'])
-    #app.add_url_rule('/revertactions/<appName>' , view_func = Credit_Manager.revert_actions)
-
-
-
-
-
-
 
 
 
