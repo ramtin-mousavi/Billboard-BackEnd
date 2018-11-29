@@ -5,7 +5,6 @@ from flask_login import login_required, login_user, logout_user , LoginManager, 
 from flask import Flask, flash, redirect, render_template, request, url_for , make_response, jsonify , session
 from flask_sqlalchemy import SQLAlchemy
 import os
-from Forms import Forms
 from flask_marshmallow import Marshmallow
 import os
 
@@ -27,6 +26,10 @@ login_manager.session_protection = "strong"
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Model.User_Model.get(user_id)
 
 
 class Sign_Up :
@@ -97,6 +100,7 @@ app.add_url_rule('/api/login' , view_func = Login.login , methods = ['POST' , 'G
 
 class Logout:
 
+    @login_required
     @staticmethod
     def logout ():
 
