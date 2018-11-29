@@ -4,13 +4,12 @@ from Models import Model
 from flask_login import login_required, login_user, logout_user , LoginManager, current_user
 from flask import Flask, flash, redirect, render_template, request, url_for , make_response, jsonify , session
 from flask_sqlalchemy import SQLAlchemy
-import os
 from flask_marshmallow import Marshmallow
 import os
 
 
 
-app = Flask(__name__ , static_folder = 'statics' , template_folder = 'Views')
+app = Flask(__name__)
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__)).replace ("\\" , '/').split(':')[1]
@@ -29,7 +28,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Model.User_Model.get(user_id)
+    return Model.User_Model.query.get(user_id)
 
 
 class Sign_Up :
@@ -100,17 +99,18 @@ app.add_url_rule('/api/login' , view_func = Login.login , methods = ['POST' , 'G
 
 class Logout:
 
-    @login_required
     @staticmethod
+    @login_required
     def logout ():
 
-        current_user = Model.User_Model.query.get (session ['user_id'])
-
-        logout_user()
-        session.pop ('user_id', None)
+        user_id = session.pop ('user_id', None)
         session.pop ('role', None)
 
-        out = {'user': current_user.serialize_one(), 'status':'OK'}
+        logout_user()
+
+        user = Model.User_Model.query.get (user_id)
+
+        out = {'user': user.serialize_one(), 'status':'OK'}
         return jsonify (out)
 
 app.add_url_rule('/api/logout' , view_func = Logout.logout)
@@ -339,7 +339,7 @@ app.add_url_rule('/api/submitFilling' , view_func = submit_filling , methods = [
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run (debug = True)
+    app.run (host = '0.0.0.0', debug = True)
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names
