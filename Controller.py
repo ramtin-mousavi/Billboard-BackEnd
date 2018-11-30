@@ -120,7 +120,7 @@ app.add_url_rule('/api/logout' , view_func = Logout.logout)
 class Show_Apps_Manager:
 
     @staticmethod
-    @login_required
+    #@login_required
     def show_apps (filter=None):
 
         if filter:
@@ -301,8 +301,12 @@ app.add_url_rule('/api/getSurvey' , view_func = Survey_Manager.get_survey , meth
 @login_required
 def show_survey():
 
-    surveys = Model.Survey_Model.query.all()
-    out = {'surveys':Model.Survey_Model.serialize_many(surveys),'status':'OK'}
+    surveys = Model.Survey_Model.query_for_user(Model.User_Model.query.get (session['user_id']))
+    if (len (surveys) != 0):
+        out = {'surveys':Model.Survey_Model.serialize_many(surveys),'status':'OK'}
+        return jsonify (out)
+
+    out = {'surveys':'', 'status':'no survey to show for this user'}
     return jsonify (out)
 
 app.add_url_rule('/api/showSurvey' , view_func = show_survey )
@@ -311,24 +315,53 @@ app.add_url_rule('/api/showSurvey' , view_func = show_survey )
 @login_required
 def fill_survey (id):
 
+    user = Model.User_Model.query.get (session['user_id'])
     survey = Model.Survey_Model.query.get (id)
-    out = {'survey':survey.serialize_one(), 'status':'OK'}
+    if survey:
+        if (user not in survey.users):
+            out = {'survey':survey.serialize_one(), 'status':'OK'}
+            return jsonify (out)
 
+        out = {'survey':'', 'status':'user has already filled this survey'}
+        return jsonify (out)
+
+    out = {'survey':'', 'status':'invalid survey id'}
     return jsonify (out)
+
 
 app.add_url_rule('/api/fillSurvey/<int:id>' , view_func = fill_survey )
 
 
 @login_required
 def submit_filling():
-    req = request.get_json()
-    #req is a dict of selected items
-    #which each value in this dic, is item's primary_key (id)
-    for key  in req:
-        item = Model.Item_Model.query.get (int(req[key]))
-        item.vote()
 
-    out = {'status':'OK'}
+    req = request.get_json(force = True).get('items')
+
+    if len(req) > 0:
+        itm = Model.Item_Model.query.get (int(req[0]))
+        survey = Model.Survey_Model.query.get((Model.Question_Model.query.get(itm.question_id)).survey_id)
+        user = Model.User_Model.query.get (session['user_id'])
+
+        if user not in survey.users:
+
+            #req is a dict of selected items
+            #which each value in this dic, is item's primary_key (id)
+            for pk in req:
+                item = Model.Item_Model.query.get (int (pk))
+                item.vote()
+
+            #add user to survey's users
+
+            survey.append_user (user)
+
+
+            out = {'status':'OK'}
+            return jsonify (out)
+
+        out = {'status':'user has already filled this survey'}
+        return jsonify (out)
+
+    out = {'status':'item list is empty'}
     return jsonify (out)
 
 app.add_url_rule('/api/submitFilling' , view_func = submit_filling , methods = ['GET','POST'])
@@ -339,7 +372,8 @@ app.add_url_rule('/api/submitFilling' , view_func = submit_filling , methods = [
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
-    app.run (host = '0.0.0.0', debug = True)
+    app.run (debug=True)
+    #app.run (host = '0.0.0.0', debug = True)
     #app.run(host = '192.168.1.108' , port = 5000, debug = False)
 
 # Correct Names
