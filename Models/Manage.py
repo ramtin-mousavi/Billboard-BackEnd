@@ -6,19 +6,17 @@ from Models import Model
 from Controller import app
 from Controller import DataBase as db
 from flask_script import Manager, prompt_bool
-from flask_apidoc.commands import GenerateApiDoc
 
 
 manager = Manager(app)
 
 
-manager.add_command('apidoc', GenerateApiDoc())
-
-
 @manager.command
 def initdb():
-    user = Model.User_Model ('ادمين' , 'admin','admin')
+    user = Model.User_Model ('ادمين' , 'admin','admin','admin')
+    user2 = Model.User_Model ('ramtin', 'ramtin@ymail.com' ,'ramtin','admin' )
     db.session.add (user)
+    db.session.add (user2)
     db.create_all()
     db.session.commit()
 
@@ -74,10 +72,63 @@ def initdb():
     db.session.add (Model.Gift_Model ('Gift Card' , 'giftcard.jpg' , 8888 , '9$' , 1 , 450))
     db.session.add (Model.Gift_Model ('Gift Card' , 'giftcard.jpg' , 9999 , '10$' , 1 , 500))
 
+
+    survey = Model.Survey_Model ('survey1','description1')
+    db.session.add (survey)
     db.session.commit()
+
+    question1 = Model.Question_Model ('qestion1', survey.id)
+    question2 = Model.Question_Model ('qestion2', survey.id)
+    question3 = Model.Question_Model ('qestion3', survey.id)
+    db.session.add_all ([question1,question2,question3])
+    db.session.commit()
+
+
+    item1 = Model.Item_Model ('item1-question1', question1.id)
+    item2 = Model.Item_Model ('item2-question1', question1.id)
+    item3 = Model.Item_Model ('item3-question1', question1.id)
+    item4 = Model.Item_Model ('item1-question2', question2.id)
+    item5 = Model.Item_Model ('item2-question2', question2.id)
+    item6 = Model.Item_Model ('item1-question3', question3.id)
+    item7 = Model.Item_Model ('item2-question3', question3.id)
+    item8 = Model.Item_Model ('item3-question3', question3.id)
+    item9 = Model.Item_Model ('item4-question3', question3.id)
+    db.session.add_all([item9,item8,item7,item1,item2,item6,item3,item4,item5])
+    db.session.commit()
+
+
+    survey2 = Model.Survey_Model ('survey2','description2')
+    db.session.add (survey2)
+    db.session.commit()
+
+
+    question21 = Model.Question_Model ('qestion21', survey2.id)
+    question22 = Model.Question_Model ('qestion22', survey2.id)
+    question23 = Model.Question_Model ('qestion23', survey2.id)
+
+    db.session.add_all ([question21,question22,question23])
+    db.session.commit()
+
+
+    item21 = Model.Item_Model ('item1-question21', question21.id)
+    item22 = Model.Item_Model ('item2-question21', question21.id)
+    item23 = Model.Item_Model ('item3-question21', question21.id)
+    item24 = Model.Item_Model ('item1-question22', question22.id)
+    item25 = Model.Item_Model ('item2-question22', question22.id)
+    item26 = Model.Item_Model ('item1-question23', question23.id)
+    item27 = Model.Item_Model ('item2-question23', question23.id)
+    item28 = Model.Item_Model ('item3-question23', question23.id)
+    item29 = Model.Item_Model ('item4-question23', question23.id)
+
+    db.session.add_all ([item21,item22,item23,item24,item25,item26,item27,item28,item29])
+    db.session.commit()
+
+
 
     for app in Model.Android_Model.query.all():
         app.approve()
+    for survey in Model.Survey_Model.query.all():
+        survey.approve()
     #for item in IosModel.query.all():
         #item.approve()
 
