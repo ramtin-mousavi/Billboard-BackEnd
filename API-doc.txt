@@ -1,0 +1,329 @@
+Signup API:
+	
+	url: /api/signup
+	
+	method: POST
+	
+	json request:  {"name": name, "email": email , "password": password}
+	
+	json response: {"user":user_serialize , "status":status}
+	
+		status:			"OK" if no problem,
+						"method is not POST" if method is not POST
+						
+		user_serialize:	{"id": 2,
+						"email": "ramtin@ymail.com",
+						"name": "ramtin",
+						"credit": 2000,
+						"role": "admin"}
+						
+					
+----------------------------------------------------------------------------------					
+Login API:
+
+	url: /api/login
+	
+	method: POST
+	
+	json request:  {"email": email , "password": password}
+	
+	json response: {"user":user_serialize , "status":status}
+	
+		status:			"OK" if no problem,
+						"password incorrect" if password is not correct,
+						"user not found" if user does not exist
+						"method is not POST" if method is not POST
+		
+		user_serialize:	{"id": 2,
+						"email": "ramtin@ymail.com",
+						"name": "ramtin",
+						"credit": 2000,
+						"role": "admin"}
+					 
+
+Logout API:
+
+	url: localhost:port/api/logout
+	
+	method: GET
+	
+	json response: {"user":user_serialize , "status":status}
+	
+		status:			"OK" if no problem
+		
+		user_serialize:	{"id": 2,
+							"email": "ramtin@ymail.com",
+							"name": "ramtin",
+							"credit": 2000,
+							"role": "admin"}
+
+----------------------------------------------------------------------------------------							
+Show Apps API:
+
+	url: 	/api/showApps/<int:filter>',
+			/api/showApps/
+	
+		url parameters:
+			int:filter		#(optional) use second url to avoid sending filter through url
+				filter = 1: all categories
+				filter = 2: apps category
+				filter = 3: games category
+				
+	method: GET
+	
+	json response: {"apps":apps_serialize , "status":status}
+	
+		status: 		"OK" if no problem,
+						"filter is not valid" if filter is other than 1,2 or 3
+						
+		apps_serialize:	[  {"id": 1,
+							"name": "divar",
+							"category": "App",
+							"company": "Divar",
+							"count": 0,
+							"credit": 100,
+							"download_link": "https://play.google.com/store?hl=en",
+							"email": "info@divar.com",
+							"icon": "https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png",
+							"phone": "09122222222"}
+							
+						, ...]
+							
+
+--------------------------------------------------------------------------------------------
+Show Gifts API:
+
+	url: /api/showApps/
+	
+	method: GET
+	
+	json response: {"gifts":gifts_serialize , "status": status}
+	
+		status: 			"OK" if no problem 
+		
+		gifts_serialize: 	[  {"id": 1,
+								"name": "Gift Card",
+								"code": "0",
+								"cost": 50,
+								"description": "1$",
+								"icon": "giftcard.jpg",
+								"supply": 5}
+								
+							, ...]
+							
+
+---------------------------------------------------------------------------------------------
+Shopping Gift API:
+
+	url: /api/shoppingresult/<int:gift_id>
+	
+		url parameters:
+			int: gift_id 	#(required) id of the gift which user wants to buy 
+			
+	method: GET
+	
+	json response: {"record":shopping_record , "status": status}
+	
+		status: 			"OK" if no problem, 
+							"not enough credit" if user's credit is not sufficient,
+							"gift has been finished" if this gift has been finished,
+							"wrong gift id" if url parameter (gift_id) is wrong
+						
+		shopping_record:   {"id": 3,
+							"gift_id": 1,
+							"user_id": 2
+							"code": 0,
+							"date": "2018-11-30T21:31:39.281177+00:00",
+							"description": "1$"		#gift description
+							}
+					
+----------------------------------------------------------------------------------------------
+Non Approved Ads For Admin API:
+
+	url: /api/getPendingRequests
+	
+	method: GET
+	
+	json response: {"apps":apps_serialize, "status": status}
+	
+		status:				"OK" if no problem,
+							"asscess denied" if user's role is not 'admin' 
+						
+		apps_serialize:		[  {"id": 1,
+								"name": "divar",
+								"category": "App",
+								"company": "Divar",
+								"count": 0,
+								"credit": 100,
+								"download_link": "https://play.google.com/store?hl=en",
+								"email": "info@divar.com",
+								"icon": "https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png",
+								"phone": "09122222222"}
+								
+							, ...]
+							
+------------------------------------------------------------------------------------------------
+Approve Or Reject API:
+
+	url: /api/approveorreject/<string:submit>/<int:app_id>
+	
+		url parameters:
+			string: submit 		#(required) valid strings are just 'approve' and 'reject'
+			int: app_id			#(required) primary key of app to be reject or approve
+			
+	method: GET
+	
+	json response: {"app":app_serialize , "submit": submit_status, "status": status}
+	
+		status:				"OK" if no problem,
+							"submit command is wrong" if submit string is other than 'approve' or 'reject',
+							"app id is wrong" if app with this id is not in database
+							
+		submit:				"reject" if app is rejected,
+							"approve" if app is approved
+		
+		app_serialize:		[  {"id": 1,
+									"name": "divar",
+									"category": "App",
+									"company": "Divar",
+									"count": 0,
+									"credit": 100,
+									"download_link": "https://play.google.com/store?hl=en",
+									"email": "info@divar.com",
+									"icon": "https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png",
+									"phone": "09122222222"}
+									
+								, ...]
+
+-----------------------------------------------------------------------------------------------
+Gift History API:
+
+	url: /api/gifthistory/
+	
+	method: GET
+	
+	json response: {"history": history_serialize , "status": status}
+	
+	status:				"OK" if no problem
+	
+	history_serialize:	[  {"id": 1,
+							"gift_id": 1,
+							"user_id": 2}
+							"code": "0",				#gift code
+							"date": "2018-11-30T21:15:50.935924+00:00",
+							"description": "1$",	#gift description	}
+							
+						,...]
+						
+---------------------------------------------------------------------------------------------------
+Advertise A Survey API:
+
+	url: /api/getSurvey
+	
+	method: POST
+	
+	json request: 	   {"name": survey_name,
+						"description": survey_description,
+						"questions" [	{"context":question_context , "items":["item1" , "item2" , ...]	#items context
+										}
+										
+									,...]
+						}
+
+	json response:		{"status": status}
+	
+		status:			"OK" if no problem
+		
+-------------------------------------------------------------------------------------------------
+Show Surveys List To User API:
+
+	url: /api/showSurvey
+	
+	method: GET
+	
+	json response: {"surveys": surveys_serialize, "status": status}
+	
+		status: 			"OK" if no problem, 
+							"no survey to show for this user" if user has filled all available surveys
+						
+		surveys_serialize:		[   {"id": 1,
+									"title": "survey1"
+									"description": "description1",
+									"credit": 100,
+									"questions": [
+													{"context": "qestion1",
+													"id": 1,
+													"items": [
+																{"context": "item1-question1",
+																"id": 4,
+																"vote_count": 1
+																},
+																
+															,...	#other items
+															]
+													},
+										
+												,...	#other questions
+												],
+												
+									}
+									
+								,...	#other surveys
+								]
+								
+----------------------------------------------------------------------------------------------------
+Show Specific Survey To User API:
+
+	url: /api/fillSurvey/<int:id>
+	
+		url parameters:
+			int:id		#(required) survey_id which user wants to answer
+
+	method: GET
+	
+	json response: {"survey": survey_serialize, "status":status}
+	
+		status:				"OK" if no problem,
+							"user has already filled this survey" if user filled this survey before
+							"invalid survey id" if survey with this id does not exist
+						
+		survey_serialize:		{"id": 1,
+										"title": "survey1"
+										"description": "description1",
+										"credit": 100,
+										"questions": [
+														{"context": "qestion1",
+														"id": 1,
+														"items": [
+																	{"context": "item1-question1",
+																	"id": 4,
+																	"vote_count": 1
+																	},
+																	
+																,...	#other items
+																]
+														},
+											
+													,...	#other questions
+													]			
+								}
+										
+										
+---------------------------------------------------------------------------------------------
+Submit Filled Survey API:
+
+	url: /api/submitFilling
+	
+	method: POST
+	
+	json request:   {"items": ["1", "5", "10", ...]		#id of items to be voted
+							  ]
+					}
+					
+	json response:	{"status": status}
+	
+		status:				"OK" if no problem,	
+							"user has already filled this survey" if user filled this survey before,
+							"item list is empty" if 'items' of json request is an empty list
+									
+							
