@@ -31,6 +31,9 @@ def load_user(user_id):
     return Model.User_Model.query.get(user_id)
 
 
+
+
+
 class Sign_Up :
 
     def sign_up():
@@ -120,7 +123,7 @@ app.add_url_rule('/api/logout' , view_func = Logout.logout)
 class Show_Apps_Manager:
 
     @staticmethod
-    #@login_required
+    @login_required
     def show_apps (filter=None):
 
         if filter:
@@ -189,16 +192,16 @@ class Shopping_Handler:
                     gift_history = Model.Gift_History_Model (user.id , temp_gift.id)
                     gift_history.add_and_commit()
 
-                    out = {'user':user.serialize_one(),'record':gift_history.serialize_one(),'status':'OK'}
+                    out = {'record':gift_history.serialize_one(),'status':'OK'}
                     return jsonify (out)
 
-                out = {'user':user.serialize_one(),'record':'','status':'not enough credit'}
+                out = {'record':'','status':'not enough credit'}
                 return jsonify (out)
 
-            out = {'user':user.serialize_one(),'record':'','status':'gift has been finished'}
+            out = {'record':'','status':'gift has been finished'}
             return jsonify (out)
 
-        out = {'user':user.serialize_one(),'record':'','status':'wrong gift id'}
+        out = {'record':'','status':'wrong gift id'}
         return jsonify (out)
 
 
@@ -229,20 +232,26 @@ class Approve_System:
 
         app = Model.Android_Model.query.get (int (app_id))
 
-        if submit == 'approve':
+        if app:
 
-            app.approve()
-            out = {'app':app.serialize_one() ,'submit':'approve','status':'OK'}
+            if submit == 'approve':
+
+                app.approve()
+                out = {'app':app.serialize_one() ,'submit':'approve','status':'OK'}
+                return jsonify (out)
+
+
+            elif submit == 'reject':
+
+                app.reject()
+                out = {'app':app.serialize_one() ,'submit':'reject','status':'OK'}
+                return jsonify (out)
+
+            out = {'app':'', 'submit':'', 'status':'submit command is wrong'}
             return jsonify (out)
 
-
-        elif submit == 'reject':
-
-            app.reject()
-            out = {'app':app.serialize_one() ,'submit':'reject','status':'OK'}
-            return jsonify (out)
-
-
+        out = {'app':'', 'submit':'', 'status':'app id is wrong'}
+        return jsonify (out)
 
 app.add_url_rule('/api/getPendingRequests' , view_func = Approve_System.get_pending_requests)
 app.add_url_rule('/api/approveorreject/<string:submit>/<int:app_id>' , view_func = Approve_System.approve_or_reject )
