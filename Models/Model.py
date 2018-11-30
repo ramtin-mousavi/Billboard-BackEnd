@@ -96,7 +96,6 @@ class Android_Model (db.Model):
     credit = db.Column (db.Integer)
     count = db.Column (db.Integer)
     download_link = db.Column (db.Text  , nullable = False)
-    deepLink = db.Column (db.Text , nullable = False)
     company = db.Column(db.String(50), nullable = False)
     email = db.Column(db.String(50), nullable = False)
     phone = db.Column(db.String(50), nullable = False)
@@ -104,7 +103,7 @@ class Android_Model (db.Model):
     valid_categories = ['Game' , 'App']
 
 
-    def __init__ (self, name, icon, category , credit , dlLink, deepLink, company, email,phone):
+    def __init__ (self, name, icon, category , credit , dlLink, company, email,phone):
 
         if category in Android_Model.valid_categories:
 
@@ -114,7 +113,6 @@ class Android_Model (db.Model):
             self.credit = credit
             self.count = 0
             self.download_link = dlLink
-            self.deepLink = deepLink
             self.company = company
             self.phone = phone
             self.email = email
@@ -174,7 +172,7 @@ class Gift_Model (db.Model):
     id = db.Column (db.Integer, primary_key = True)
     name =  db.Column(db.String(50), nullable = False)
     icon = db.Column (db.Text , nullable = False)
-    code = db.Column (db.Integer)
+    code = db.Column (db.Text)
     description = db.Column (db.Text , nullable = False)
     supply = db.Column (db.Integer)
     cost = db.Column (db.Integer)
@@ -221,7 +219,7 @@ class Gift_History_Model (db.Model):
     gift_id = db.Column(db.Integer, nullable = False)
     date = db.Column(db.DateTime, default = datetime.now)
     description = db.Column(db.Text, nullable=False)
-    code = db.Column(db.Integer)
+    code = db.Column(db.Text)
 
 
     def __init__(self, user_id , giftId ):
@@ -392,4 +390,4 @@ class Survey_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Survey_Model
-        exclude = ('users',)
+        exclude = ('users','is_approved')
