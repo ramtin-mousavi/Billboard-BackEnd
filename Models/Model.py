@@ -15,6 +15,14 @@ from marshmallow import fields
 
 
 
+#many to many tables
+user_survey_table = db.Table ('user_survey_table',
+db.Column('user_id', db.Integer, db.ForeignKey('survey_model.id')),
+db.Column('survey_id', db.Integer, db.ForeignKey('user_model.id'))
+)
+
+
+
 class User_Model (db.Model, UserMixin):
 
     __tablename__ = 'user_model'
@@ -34,6 +42,7 @@ class User_Model (db.Model, UserMixin):
             self.email = email.lower()
             self.pass_hash = generate_password_hash (password)
             self.credit = 2000
+            self.role = role
 
         else:
             raise ValueError()
@@ -329,11 +338,12 @@ class Survey_Model (db.Model):
     is_approved = db.Column (db.Boolean , nullable = False)
     credit = db.Column (db.Integer , nullable = False)
 
+    users = db.relationship("User_Model", secondary = user_survey_table)
 
     def __init__ (self , title , description ):
         self.title = title
         self.description = description
-        self.is_approved = True
+        self.is_approved = False
         self.credit = 100
 
     def approve (self):
@@ -348,6 +358,9 @@ class Survey_Model (db.Model):
         db.session.add (self)
         db.session.commit()
 
+    def append_user (self,user):
+        self.users.append (user)
+        db.session.commit()
 
     def serialize_one (self):
         return Survey_Model_Schema().dump(self).data
@@ -355,6 +368,21 @@ class Survey_Model (db.Model):
     @staticmethod
     def serialize_many (arg):
         return Survey_Model_Schema(many = True).dump (arg).data
+
+    @staticmethod
+    def query_for_admin():
+        return Survey_Model.query.filter (Survey_Model.is_approved == False)
+
+    @staticmethod
+    def query_for_user (user):
+
+        approved_surveys = Survey_Model.query.filter (Survey_Model.is_approved == True)
+        surveys_to_show = []
+        for survey in approved_surveys:
+            if user not in survey.users:
+                surveys_to_show.append (survey)
+
+        return surveys_to_show
 
 
 
@@ -364,3 +392,4 @@ class Survey_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Survey_Model
+        exclude = ('users',)
