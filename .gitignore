@@ -9,4 +9,5 @@ statics/
 *.jpg
 *.png
 *.ttf
-Forms/pycache/
+Billboard/__pycache__/
+Billboard/*/__pycache__/
