@@ -19,9 +19,6 @@ class Android_Model (db.Model):
     credit = db.Column (db.Integer)
     count = db.Column (db.Integer)
     download_link = db.Column (db.Text  , nullable = False)
-    company = db.Column(db.String(50), nullable = False)
-    email = db.Column(db.String(50), nullable = False)
-    phone = db.Column(db.String(50), nullable = False)
     approval_status = db.Column (db.String(20), nullable = False)
     advertiser_id = db.Column(db.Integer, db.ForeignKey('user_model.id'), nullable=False)
 
@@ -29,7 +26,7 @@ class Android_Model (db.Model):
     valid_categories = ['Game' , 'App']
 
 
-    def __init__ (self, name, icon, category, credit, dlLink, company, email, phone, advertiser_id):
+    def __init__ (self, name, icon, category, credit, dlLink, advertiser_id):
 
         if category in Android_Model.valid_categories:
 
@@ -39,9 +36,6 @@ class Android_Model (db.Model):
             self.credit = credit
             self.count = 0
             self.download_link = dlLink
-            self.company = company
-            self.phone = phone
-            self.email = email
             self.advertiser_id = advertiser_id
             self.approval_status = 'pending'
 
