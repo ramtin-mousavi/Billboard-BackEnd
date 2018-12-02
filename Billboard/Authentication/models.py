@@ -6,6 +6,9 @@ from werkzeug import generate_password_hash, check_password_hash
 from Billboard import MarshMallow as ma
 from flask_marshmallow import Marshmallow
 
+from Billboard.Apps.models import Android_Model
+from Billboard.Survey.models import Survey_Model
+
 
 class User_Model (db.Model, UserMixin):
 
@@ -17,7 +20,8 @@ class User_Model (db.Model, UserMixin):
     pass_hash = db.Column(db.String(54))
     credit = db.Column (db.Integer)
     role = db.Column (db.String (10) , nullable = False)
-
+    advertised_apps = db.relationship ('Android_Model' , backref = 'user_model' , lazy = True)
+    advertised_surveys = db.relationship ('Survey_Model' , backref = 'user_model' , lazy = True)
 
     def __init__ (self , name , email , password, role):
 
