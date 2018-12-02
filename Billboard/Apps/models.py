@@ -7,6 +7,7 @@ from flask_marshmallow import Marshmallow
 
 
 class Android_Model (db.Model):
+
     id = db.Column (db.Integer, primary_key = True)
     name =  db.Column(db.String(50), nullable = False)
     icon = db.Column (db.Text , nullable = False)
@@ -17,8 +18,10 @@ class Android_Model (db.Model):
     company = db.Column(db.String(50), nullable = False)
     email = db.Column(db.String(50), nullable = False)
     phone = db.Column(db.String(50), nullable = False)
-    is_approved = db.Column (db.Boolean , nullable = False)
+    approval_status = db.Column (db.String(20), nullable = False)
+
     valid_categories = ['Game' , 'App']
+    #valid_approvals = ['approved','rejected','pending']
 
 
     def __init__ (self, name, icon, category , credit , dlLink, company, email,phone):
@@ -34,7 +37,7 @@ class Android_Model (db.Model):
             self.company = company
             self.phone = phone
             self.email = email
-            self.is_approved = False
+            self.approval_status = 'pending'
 
         else:
             raise ValueError()
@@ -48,26 +51,26 @@ class Android_Model (db.Model):
         db.session.commit()
 
     def approve (self):
-        self.is_approved = True
+        self.approval_status = 'approved'
         db.session.commit()
 
     def reject (self):
-        db.session.delete (self)
+        self.approval_status = 'rejected'
         db.session.commit()
 
 
     @staticmethod
     def all_query ():
-        return Android_Model.query.filter (Android_Model.is_approved == True)
+        return Android_Model.query.filter (Android_Model.approval_status == 'approved')
 
     @staticmethod
     def filter_query (fil):
-        return Android_Model.query.filter_by (category = fil , is_approved = True)
+        return Android_Model.query.filter_by (category = fil , approval_status = 'approved')
 
 
     @staticmethod
     def query_for_admin ():
-        return Android_Model.query.filter (Android_Model.is_approved == False)
+        return Android_Model.query.filter (Android_Model.approval_status == 'pending')
 
 
     def serialize_one (self):
