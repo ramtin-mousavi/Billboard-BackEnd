@@ -10,6 +10,19 @@ class Apps_Manager:
 
     @staticmethod
     @login_required
+    def get_app():
+
+        req = request.get_json()
+        user_id = session ['user_id']
+        new_app = Android_Model (req['name'], req['icon'], req['credit'], req['dlLink'], user_id)
+        new_app.add_and_commit()
+
+        out = {'status':'OK'}
+        return jsonify (out)
+
+
+    @staticmethod
+    @login_required
     def show_apps (filter=None):
 
         if filter:
@@ -37,5 +50,6 @@ class Apps_Manager:
         return jsonify (out)
 
 
+apps.add_url_rule('/api/getApp' , view_func = Apps_Manager.get_app , methods = ['GET','POST'])
 apps.add_url_rule('/api/showApps/<int:filter>' , view_func = Apps_Manager.show_apps)
 apps.add_url_rule('/api/showApps/' , view_func = Apps_Manager.show_apps)
