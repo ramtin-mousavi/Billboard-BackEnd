@@ -3,10 +3,14 @@ from Billboard import DataBase as db
 from Billboard import MarshMallow as ma
 from flask_marshmallow import Marshmallow
 
+from Billboard.Authentication.models import User_Model
+
 
 
 
 class Android_Model (db.Model):
+
+    __tablename__ = 'android_model'
 
     id = db.Column (db.Integer, primary_key = True)
     name =  db.Column(db.String(50), nullable = False)
@@ -19,11 +23,13 @@ class Android_Model (db.Model):
     email = db.Column(db.String(50), nullable = False)
     phone = db.Column(db.String(50), nullable = False)
     approval_status = db.Column (db.String(20), nullable = False)
+    advertiser_id = db.Column(db.Integer, db.ForeignKey('user_model.id'), nullable=False)
+
     #valid_approvals = ['approved','rejected','pending']
     valid_categories = ['Game' , 'App']
 
 
-    def __init__ (self, name, icon, category , credit , dlLink, company, email,phone):
+    def __init__ (self, name, icon, category, credit, dlLink, company, email, phone, advertiser_id):
 
         if category in Android_Model.valid_categories:
 
@@ -36,6 +42,7 @@ class Android_Model (db.Model):
             self.company = company
             self.phone = phone
             self.email = email
+            self.advertiser_id = advertiser_id
             self.approval_status = 'pending'
 
         else:
