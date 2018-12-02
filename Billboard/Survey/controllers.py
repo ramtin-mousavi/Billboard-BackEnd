@@ -19,8 +19,9 @@ class Survey_Manager:
         title = req ['name']
         description = req ['description']
         survey_questions = req ['questions']
+        user_id = session['user_id']
 
-        new_survey = Survey_Model (title, description)
+        new_survey = Survey_Model (title, description, user_id)
         new_survey.add_and_commit()
 
         for question in survey_questions:
