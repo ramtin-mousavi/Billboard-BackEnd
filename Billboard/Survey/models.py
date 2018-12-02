@@ -100,7 +100,7 @@ class Survey_Model (db.Model):
     description = db.Column (db.Text , nullable = False)
     # foreign key to user
     questions = db.relationship ('Question_Model' , backref = 'survey_model' , lazy = True)
-    is_approved = db.Column (db.Boolean , nullable = False)
+    approval_status = db.Column (db.String(20), nullable = False)
     credit = db.Column (db.Integer , nullable = False)
 
     users = db.relationship("User_Model", secondary = user_survey_table)
@@ -108,15 +108,15 @@ class Survey_Model (db.Model):
     def __init__ (self , title , description ):
         self.title = title
         self.description = description
-        self.is_approved = False
+        self.approval_status = 'pending'
         self.credit = 100
 
     def approve (self):
-        self.is_approved = True
+        self.approval_status = 'approved'
         db.session.commit()
 
     def reject (self):
-        db.session.delete (self)
+        self.approval_status = 'rejected'
         db.session.commit()
 
     def add_and_commit (self):
@@ -136,12 +136,12 @@ class Survey_Model (db.Model):
 
     @staticmethod
     def query_for_admin():
-        return Survey_Model.query.filter (Survey_Model.is_approved == False)
+        return Survey_Model.query.filter (Survey_Model.approval_status == 'pending')
 
     @staticmethod
     def query_for_user (user):
 
-        approved_surveys = Survey_Model.query.filter (Survey_Model.is_approved == True)
+        approved_surveys = Survey_Model.query.filter (Survey_Model.approval_status == 'approved')
         surveys_to_show = []
         for survey in approved_surveys:
             if user not in survey.users:
@@ -157,4 +157,4 @@ class Survey_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Survey_Model
-        exclude = ('users','is_approved')
+        exclude = ('users','approval_status')
