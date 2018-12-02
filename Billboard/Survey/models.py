@@ -98,18 +98,19 @@ class Survey_Model (db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column (db.String(40), nullable = False)
     description = db.Column (db.Text , nullable = False)
-    # foreign key to user
+    advertiser_id = db.Column(db.Integer, db.ForeignKey('user_model.id'), nullable=False)
     questions = db.relationship ('Question_Model' , backref = 'survey_model' , lazy = True)
     approval_status = db.Column (db.String(20), nullable = False)
     credit = db.Column (db.Integer , nullable = False)
 
     users = db.relationship("User_Model", secondary = user_survey_table)
 
-    def __init__ (self , title , description ):
+    def __init__ (self , title , description, advertiser_id):
         self.title = title
         self.description = description
         self.approval_status = 'pending'
         self.credit = 100
+        self.advertiser_id = advertiser_id
 
     def approve (self):
         self.approval_status = 'approved'
