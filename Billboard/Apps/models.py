@@ -19,9 +19,8 @@ class Android_Model (db.Model):
     email = db.Column(db.String(50), nullable = False)
     phone = db.Column(db.String(50), nullable = False)
     approval_status = db.Column (db.String(20), nullable = False)
-
-    valid_categories = ['Game' , 'App']
     #valid_approvals = ['approved','rejected','pending']
+    valid_categories = ['Game' , 'App']
 
 
     def __init__ (self, name, icon, category , credit , dlLink, company, email,phone):
@@ -84,4 +83,4 @@ class Android_Model (db.Model):
 class Android_Model_Schema (ma.ModelSchema):
     class Meta:
         model = Android_Model
-        exclude = ('is_approved',)
+        exclude = ('approval_status',)
