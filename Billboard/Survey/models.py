@@ -136,7 +136,7 @@ class Survey_Model (db.Model):
         approved_surveys = Survey_Model.query.filter (Survey_Model.approval_status == 'approved')
         surveys_to_show = []
         for survey in approved_surveys:
-            if user not in survey.users:
+            if survey not in user.submitted_surveys:
                 surveys_to_show.append (survey)
 
         return surveys_to_show
@@ -149,4 +149,4 @@ class Survey_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Survey_Model
-        exclude = ('approval_status')
+        exclude = ('approval_status',)
