@@ -149,4 +149,4 @@ class Survey_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Survey_Model
-        exclude = ('users','approval_status')
+        exclude = ('approval_status')
