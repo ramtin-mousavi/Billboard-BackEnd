@@ -30,6 +30,7 @@ class User_Model (db.Model, UserMixin):
     role = db.Column (db.String (10) , nullable = False)
     advertised_apps = db.relationship ('Android_Model' , backref = 'user_model' , lazy = True)
     advertised_surveys = db.relationship ('Survey_Model' , backref = 'user_model' , lazy = True)
+    submitted_surveys = db.relationship("Survey_Model", secondary = user_survey_table)
 
     def __init__ (self , name , email , password, role):
 

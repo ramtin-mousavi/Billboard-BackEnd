@@ -97,7 +97,6 @@ class Survey_Model (db.Model):
     approval_status = db.Column (db.String(20), nullable = False)
     credit = db.Column (db.Integer , nullable = False)
 
-    users = db.relationship("User_Model", secondary = user_survey_table)
 
     def __init__ (self , title , description, advertiser_id):
         self.title = title
