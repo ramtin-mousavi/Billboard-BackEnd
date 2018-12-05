@@ -60,7 +60,7 @@ class Survey_Manager:
         user = User_Model.query.get (session['user_id'])
         survey = Survey_Model.query.get (id)
         if survey:
-            if (user not in survey.users):
+            if (survey not in user.submitted_surveys):
                 out = {'survey':survey.serialize_one(), 'status':'OK'}
                 return jsonify (out)
 
