@@ -3,7 +3,6 @@ from Billboard import DataBase as db
 from Billboard import MarshMallow as ma
 from flask_marshmallow import Marshmallow
 
-from Billboard.Authentication.models import User_Model
 
 
 
