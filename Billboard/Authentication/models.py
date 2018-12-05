@@ -80,4 +80,4 @@ class User_Model (db.Model, UserMixin):
 class User_Model_Schema (ma.ModelSchema):
     class Meta:
         model = User_Model
-        exclude = ('pass_hash','submitted_surveys')
+        exclude = ('pass_hash','submitted_surveys','advertised_apps', 'advertised_surveys')
