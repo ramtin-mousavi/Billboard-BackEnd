@@ -10,6 +10,14 @@ from Billboard.Apps.models import Android_Model
 from Billboard.Survey.models import Survey_Model
 
 
+#many to many relationship between users and surveys
+user_survey_table = db.Table ('user_survey_table',
+db.Column('user_id', db.Integer, db.ForeignKey('survey_model.id')),
+db.Column('survey_id', db.Integer, db.ForeignKey('user_model.id'))
+)
+
+
+
 class User_Model (db.Model, UserMixin):
 
     __tablename__ = 'user_model'
