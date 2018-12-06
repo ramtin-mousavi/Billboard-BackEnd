@@ -30,6 +30,7 @@ from Billboard.Apps.controllers import apps
 from Billboard.Gifts.controllers import gifts
 from Billboard.Survey.controllers import surveys
 from Billboard.Admin.controllers import admin
+from Billboard.Profile.controllers import profile
 
 
 app.register_blueprint(authentication)
@@ -37,3 +38,4 @@ app.register_blueprint(apps)
 app.register_blueprint(gifts)
 app.register_blueprint(surveys)
 app.register_blueprint(admin)
+app.register_blueprint(profile)
