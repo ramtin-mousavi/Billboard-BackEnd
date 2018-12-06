@@ -1,0 +1,94 @@
+Show Surveys List To User API:
+
+	url: /api/showSurvey
+	
+	method: GET
+	
+	json response: {"surveys": surveys_serialize, "status": status}
+	
+		status: 			"OK" if no problem, 
+							"no survey to show for this user" if user has filled all available surveys
+						
+		surveys_serialize:		[   {	"id": 1,
+							"title": "survey1"
+							"description": "description1",
+							"advertise_date": "2018-12-06T15:26:10.952494+00:00",
+							"expiration_date": "2019-01-05T15:26:10.952494+00:00",
+							"credit": 100,
+							"questions": [
+									{"context": "qestion1",
+									"id": 1,
+									"items": [
+											{"context": "item1-question1",
+											"id": 4,
+											"vote_count": 1
+											},
+																
+										,...	#other items
+										]
+									},
+										
+									,...	#other questions
+									],
+												
+							}
+									
+						,...	#other surveys
+						]
+								
+----------------------------------------------------------------------------------------------------
+Show Specific Survey To User API:
+
+	url: /api/fillSurvey/<int:id>
+	
+		url parameters:
+			int:id		#(required) survey_id which user wants to answer
+
+	method: GET
+	
+	json response: {"survey": survey_serialize, "status":status}
+	
+		status:				"OK" if no problem,
+							"user has already filled this survey" if user filled this survey before
+							"invalid survey id" if survey with this id does not exist
+						
+		survey_serialize:		{	"id": 1,
+							"title": "survey1"
+							"description": "description1",
+							"advertise_date": "2018-12-06T15:26:10.952494+00:00",
+							"expiration_date": "2019-01-05T15:26:10.952494+00:00",
+							"credit": 100,
+							"questions": [
+									{"context": "qestion1",
+									"id": 1,
+									"items": [
+											{"context": "item1-question1",
+											"id": 4,
+											"vote_count": 1
+											},
+																	
+										,...	#other items
+										]
+									},
+									
+								,...	#other questions
+								]			
+						}
+										
+										
+---------------------------------------------------------------------------------------------
+Submit Filled Survey API:
+
+	url: /api/submitFilling
+	
+	method: POST
+	
+	json request:   {"items": ["1", "5", "10", ...]		#id of items to be voted
+							  
+			}
+					
+	json response:	{"status": status}
+	
+		status:				"OK" if no problem,	
+						"user has already filled this survey" if user filled this survey before,
+						"item list is empty" if 'items' of json request is an empty list

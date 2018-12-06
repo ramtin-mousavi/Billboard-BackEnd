@@ -1,0 +1,67 @@
+Show Gifts API:
+
+	url: /api/showApps/
+	
+	method: GET
+	
+	json response: {"gifts":gifts_serialize , "status": status}
+	
+		status: 			"OK" if no problem 
+		
+		gifts_serialize: 	[  {"id": 1,
+								"name": "Gift Card",
+								"code": "0",
+								"cost": 50,
+								"description": "1$",
+								"icon": "giftcard.jpg",
+								"supply": 5}
+								
+							, ...]
+							
+
+---------------------------------------------------------------------------------------------
+Shopping Gift API:
+
+	url: /api/shoppingresult/<int:gift_id>
+	
+		url parameters:
+			int: gift_id 	#(required) id of the gift which user wants to buy 
+			
+	method: GET
+	
+	json response: {"record":shopping_record , "status": status}
+	
+		status: 			"OK" if no problem, 
+							"not enough credit" if user's credit is not sufficient,
+							"gift has been finished" if this gift has been finished,
+							"wrong gift id" if url parameter (gift_id) is wrong
+						
+		shopping_record:   {"id": 3,
+							"gift_id": 1,
+							"user_id": 2
+							"code": 0,
+							"date": "2018-11-30T21:31:39.281177+00:00",
+							"description": "1$"		#gift description
+							}
+					
+----------------------------------------------------------------------------------------------
+Gift History API:
+
+	url: /api/gifthistory/
+	
+	method: GET
+	
+	json response: {"history": history_serialize , "status": status}
+	
+	status:				"OK" if no problem
+	
+	history_serialize:	[  {"id": 1,
+							"gift_id": 1,
+							"user_id": 2}
+							"code": "0",				#gift code
+							"date": "2018-11-30T21:15:50.935924+00:00",
+							"description": "1$",	#gift description	}
+							
+						,...]
+						
+---------------------------------------------------------------------------------------------------

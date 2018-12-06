@@ -1,0 +1,61 @@
+Signup API:
+	
+	url: /api/signup
+	
+	method: POST
+	
+	json request:  {"name": name, "email": email , "password": password}
+	
+	json response: {"user":user_serialize , "status":status}
+	
+		status:			"OK" if no problem,
+						"method is not POST" if method is not POST
+						
+		user_serialize:	{"id": 2,
+						"email": "ramtin@ymail.com",
+						"name": "ramtin",
+						"credit": 2000,
+						"role": "admin"}
+						
+					
+----------------------------------------------------------------------------------					
+Login API:
+
+	url: /api/login
+	
+	method: POST
+	
+	json request:  {"email": email , "password": password}
+	
+	json response: {"user":user_serialize , "status":status}
+	
+		status:			"OK" if no problem,
+						"password incorrect" if password is not correct,
+						"user not found" if user does not exist
+						"method is not POST" if method is not POST
+		
+		user_serialize:	{"id": 2,
+						"email": "ramtin@ymail.com",
+						"name": "ramtin",
+						"credit": 2000,
+						"role": "admin"}
+	
+	
+--------------------------------------------------------------------------------	
+Logout API:
+
+	url: localhost:port/api/logout
+	
+	method: GET
+	
+	json response: {"user":user_serialize , "status":status}
+	
+		status:			"OK" if no problem
+		
+		user_serialize:	{"id": 2,
+							"email": "ramtin@ymail.com",
+							"name": "ramtin",
+							"credit": 2000,
+							"role": "admin"}
+
+----------------------------------------------------------------------------------------

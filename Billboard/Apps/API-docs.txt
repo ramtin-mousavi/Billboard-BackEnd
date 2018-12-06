@@ -1,0 +1,32 @@
+Show Apps API:
+
+	url: 	/api/showApps/<int:filter>',
+			/api/showApps/
+	
+		url parameters:
+			int:filter		#(optional) use second url to avoid sending filter through url
+				filter = 1: all categories
+				filter = 2: apps category
+				filter = 3: games category
+				
+	method: GET
+	
+	json response: {"apps":apps_serialize , "status":status}
+	
+		status: 		"OK" if no problem,
+						"filter is not valid" if filter is other than 1,2 or 3
+						
+		apps_serialize:	[  {"id": 1,
+							"name": "divar",
+							"advertise_date": "2018-12-06T15:26:10.952494+00:00",
+							"category": "App",
+							"count": 0,
+							"credit": 100,
+							"download_link": "https://play.google.com/store?hl=en",
+							"expiration_date": "2019-01-05T15:26:10.952494+00:00",
+							"icon": "https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png"
+							}
+						, ...]
+							
+
+--------------------------------------------------------------------------------------------
