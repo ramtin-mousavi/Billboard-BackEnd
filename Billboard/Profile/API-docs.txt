@@ -7,6 +7,7 @@ Advertise A Survey API:
 	json request: 	   {	"name": survey_name,
 				"description": survey_description,
 				"credit": credit_for_this_survey,
+				"duration": survey_duration,
 				"questions" [	{"context":question_context , "items":["item1" , "item2" , ...]	#items context
 						}
 
@@ -26,8 +27,12 @@ Advertise An App API:
 
 	json request: 	   {	"name": app_name,
 				"icon": app_icon_link,
+				"category": app_category 	#just "App" and Game" Are valid
 				"credit": credit_for_this_app
 				"dlLink": download_link
+				"duration" app_duration
+				
+				
 		   	   }
 
 	json response:		{"status": status}

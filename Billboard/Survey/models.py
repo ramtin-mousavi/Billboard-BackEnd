@@ -99,11 +99,11 @@ class Survey_Model (db.Model):
     advertise_date = db.Column(db.DateTime)
     expiration_date = db.Column(db.DateTime)
 
-    def __init__ (self , title , description, advertiser_id, duration):
+    def __init__ (self , title , description, advertiser_id, duration, credit):
         self.title = title
         self.description = description
         self.approval_status = 'pending'
-        self.credit = 100
+        self.credit = credit
         self.advertiser_id = advertiser_id
         self.advertise_date = datetime.now()
         self.expiration_date = self.advertise_date + timedelta (days = duration)

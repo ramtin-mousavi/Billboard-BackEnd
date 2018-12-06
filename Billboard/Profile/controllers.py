@@ -2,7 +2,7 @@ from flask import request, jsonify, session, Blueprint
 from flask_login import login_required
 
 from Billboard.Apps.models import Android_Model
-from Billboard.Survey.models import Survey_Model
+from Billboard.Survey.models import Survey_Model, Question_Model, Item_Model
 
 
 profile = Blueprint('profile', __name__)
@@ -99,14 +99,16 @@ class Advertising:
     @login_required
     def advertise_survey ():
 
-        req = request.get_json()
+        req = request.get_json(force = True)
 
         title = req ['name']
         description = req ['description']
+        credit = int (req ['credit'])
+        duration = int (req ['duration'])
         survey_questions = req ['questions']
         user_id = session['user_id']
 
-        new_survey = Survey_Model (title, description, user_id)
+        new_survey = Survey_Model (title, description, user_id, duration, credit)
         new_survey.add_and_commit()
 
         for question in survey_questions:
@@ -119,6 +121,7 @@ class Advertising:
             for item in question_items:
                 item_context = item ['context']
                 new_item = Item_Model (item_context, new_question.id)
+                new_item.add_and_commit()
 
         out = {'status':'OK'}
 
@@ -129,9 +132,9 @@ class Advertising:
     @login_required
     def advertise_app():
 
-        req = request.get_json()
+        req = request.get_json(force = True)
         user_id = session ['user_id']
-        new_app = Android_Model (req['name'], req['icon'], req['credit'], req['dlLink'], user_id)
+        new_app = Android_Model (req['name'], req['icon'], req['category'], int(req['credit']), req['dlLink'], user_id, int(req['duration']))
         new_app.add_and_commit()
 
         out = {'status':'OK'}
