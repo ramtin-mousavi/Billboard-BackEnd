@@ -23,7 +23,7 @@ class Advertise_Stat:
     @login_required
     def get_advertised_surveys():
 
-        surveys = Survey_Model.serialize_many(Survey_Model.query_for_advertiser(['user_id']))
+        surveys = Survey_Model.serialize_many(Survey_Model.query_for_advertiser(session['user_id']))
         out = {'surveys':surveys, 'status':'OK'}
         return jsonify (out)
 
@@ -33,21 +33,25 @@ class Advertise_Stat:
     def get_app_stat (app_id):
 
         app = Android_Model.query.get (app_id)
-
         if app:
 
-            if app.approval_status == 'pending':
-                out = {'app_stat':app.serialize_one(), 'status':'app is waiting to be submitted'}
-                return jsonify (out)
+            if app in Android_Model.query_for_advertiser (session['user_id']):
 
-            elif app.approval_status == 'rejected':
-                out = {'app_stat':app.serialize_one(), 'status':'app has been rejected'}
-                return jsonify (out)
+                if app.approval_status == 'pending':
+                    out = {'app_stat':app.serialize_one(), 'status':'app is waiting to be submitted'}
+                    return jsonify (out)
 
-            else:
+                elif app.approval_status == 'rejected':
+                    out = {'app_stat':app.serialize_one(), 'status':'app has been rejected'}
+                    return jsonify (out)
 
-                out = {'app_stat':app.serialize_one(), 'status':'OK'}
-                return jsonify (out)
+                else:
+
+                    out = {'app_stat':app.serialize_one(), 'status':'OK'}
+                    return jsonify (out)
+
+            out = {'app_stat':'', 'status':'you are not the advertiser of this app'}
+            return jsonify (out)
 
         out = {'app_stat':'', 'status':'wrong app_id'}
         return jsonify (out)
@@ -59,20 +63,25 @@ class Advertise_Stat:
 
         survey = Survey_Model.query.get (survey_id)
 
-        if app:
+        if survey:
 
-            if survey.approval_status == 'pending':
-                out = {'survey_stat':survey.serialize_one(), 'status':'survey is waiting to be submitted'}
-                return jsonify (out)
+            if survey in Survey_Model.query_for_advertiser (session['user_id']):
 
-            elif survey.approval_status == 'rejected':
-                out = {'survey_stat':survey.serialize_one(), 'status':'survey has been rejected'}
-                return jsonify (out)
+                if survey.approval_status == 'pending':
+                    out = {'survey_stat':survey.serialize_one(), 'status':'survey is waiting to be submitted'}
+                    return jsonify (out)
 
-            else:
+                elif survey.approval_status == 'rejected':
+                    out = {'survey_stat':survey.serialize_one(), 'status':'survey has been rejected'}
+                    return jsonify (out)
 
-                out = {'survey_stat':survey.serialize_one(), 'status':'OK'}
-                return jsonify (out)
+                else:
+
+                    out = {'survey_stat':survey.serialize_one(), 'status':'OK'}
+                    return jsonify (out)
+
+            out = {'app_stat':'', 'status':'you are not the advertiser of this survey'}
+            return jsonify (out)
 
         out = {'survey_stat':'', 'status':'wrong survey_id'}
         return jsonify (out)
