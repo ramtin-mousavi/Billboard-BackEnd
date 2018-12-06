@@ -67,6 +67,10 @@ class User_Model (db.Model, UserMixin):
         self.credit += cost
         db.session.commit()
 
+    def append_survey (self,survey):
+        self.submitted_surveys.append (survey)
+        db.session.commit()
+
 
     def serialize_one (self):
         return User_Model_Schema().dump(self).data

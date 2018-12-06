@@ -115,9 +115,6 @@ class Survey_Model (db.Model):
         db.session.add (self)
         db.session.commit()
 
-    def append_user (self,user):
-        self.users.append (user)
-        db.session.commit()
 
     def serialize_one (self):
         return Survey_Model_Schema().dump(self).data
