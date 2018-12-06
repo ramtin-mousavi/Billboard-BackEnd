@@ -3,6 +3,7 @@ from Billboard import DataBase as db
 from Billboard import MarshMallow as ma
 from flask_marshmallow import Marshmallow
 
+from datetime import datetime, timedelta
 
 
 
@@ -20,12 +21,15 @@ class Android_Model (db.Model):
     download_link = db.Column (db.Text  , nullable = False)
     approval_status = db.Column (db.String(20), nullable = False)
     advertiser_id = db.Column(db.Integer, db.ForeignKey('user_model.id'), nullable=False)
+    advertise_date = db.Column(db.DateTime)
+    expiration_date = db.Column(db.DateTime)
+
 
     #valid_approvals = ['approved','rejected','pending']
     valid_categories = ['Game' , 'App']
 
 
-    def __init__ (self, name, icon, category, credit, dlLink, advertiser_id):
+    def __init__ (self, name, icon, category, credit, dlLink, advertiser_id, duration):
 
         if category in Android_Model.valid_categories:
 
@@ -37,6 +41,8 @@ class Android_Model (db.Model):
             self.download_link = dlLink
             self.advertiser_id = advertiser_id
             self.approval_status = 'pending'
+            self.advertise_date = datetime.now()
+            self.expiration_date = self.advertise_date + timedelta (days = duration)
 
         else:
             raise ValueError()

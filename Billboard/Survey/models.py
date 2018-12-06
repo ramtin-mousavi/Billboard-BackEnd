@@ -3,7 +3,7 @@ from Billboard import DataBase as db
 from Billboard import MarshMallow as ma
 from flask_marshmallow import Marshmallow
 
-
+from datetime import datetime, timedelta
 
 
 
@@ -94,7 +94,8 @@ class Survey_Model (db.Model):
     questions = db.relationship ('Question_Model' , backref = 'survey_model' , lazy = True)
     approval_status = db.Column (db.String(20), nullable = False)
     credit = db.Column (db.Integer , nullable = False)
-
+    advertise_date = db.Column(db.DateTime)
+    expiration_date = db.Column(db.DateTime)
 
     def __init__ (self , title , description, advertiser_id):
         self.title = title
@@ -102,6 +103,8 @@ class Survey_Model (db.Model):
         self.approval_status = 'pending'
         self.credit = 100
         self.advertiser_id = advertiser_id
+        self.advertise_date = datetime.now()
+        self.expiration_date = self.advertise_date + timedelta (days = duration)
 
     def approve (self):
         self.approval_status = 'approved'
@@ -141,7 +144,7 @@ class Survey_Model (db.Model):
 
     @staticmethod
     def serialize_many (arg):
-        return Survey_Model_Schema(many = True).dump (arg).data    
+        return Survey_Model_Schema(many = True).dump (arg).data
 
 
 class Survey_Model_Schema (ma.ModelSchema):
