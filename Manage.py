@@ -27,17 +27,17 @@ def initdb():
 
 
 
-    db.session.add (Android_Model ('Divar','https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png','App',100,'https://play.google.com/store?hl=en','Divar','info@divar.com', '09122222222'))
-    db.session.add (Android_Model ('Pelak','https://s.cafebazaar.ir/1/icons/com.example.pelak_512x512.png','App',50,'https://play.google.com/store?hl=en','Pelak','info@pelak.com', '09122222222'))
-    db.session.add (Android_Model ('Ding','https://s.cafebazaar.ir/1/icons/com.dinnng.passenger_512x512.png','App',50,'https://play.google.com/store?hl=en','Ding','info@ding.com', '09122222222'))
-    db.session.add (Android_Model ('OstadKar','https://s.cafebazaar.ir/1/icons/ir.ostadkar.customer_512x512.png','App',200,'https://play.google.com/store?hl=en','Ostad Kar','info@ostad.com', '09122222222'))
-    db.session.add (Android_Model ('Reyhoon','http://daramadinterneti.com/wp-content/uploads/2017/12/reyhoon-logo-300x232.png','App',100,'https://play.google.com/store?hl=en','Reyhoon','info@reyhoon.com', '09123241365'))
-    db.session.add (Android_Model ('Digikala','https://is3-ssl.mzstatic.com/image/thumb/Purple122/v4/c4/5e/44/c45e444d-a6c4-bd86-41d7-d3072d6d12df/source/512x512bb.jpg','App',50,'https://play.google.com/store?hl=en','Digikala','info@digikala.com', '09121111111'))
-    db.session.add (Android_Model ('CinemaTicket','https://avvalmarket.ir/apps/com.hampardaz.cinematicket/icon/512x512.png','App',50,'https://play.google.com/store?hl=en','Cinema Ticket','info@cinema.com', '09123241365'))
-    db.session.add (Android_Model ('Snapp','https://getandroid.ir/uploads/posts/2017-03/1488433149_Snapp-icon.png','App',200,'https://play.google.com/store?hl=en','Snapp','info@snapp.com', '09122222222'))
-    db.session.add (Android_Model ('SoccerStars','https://images-eu.ssl-images-amazon.com/images/I/91pslkY9oiL.png','Game',100,'https://play.google.com/store?hl=en','Soccer Company','info@soccer.com', '09122222222'))
-    db.session.add (Android_Model ('Loop','https://is3-ssl.mzstatic.com/image/thumb/Purple115/v4/d2/3f/90/d23f906c-f0b8-90bb-d52e-1a46604e413e/AppIcon-1x_U007emarketing-85-220-8.jpeg/246x0w.jpg','Game',100,'https://play.google.com/store?hl=en','Loop Game','info@loop.com', '09122222222'))
-    db.session.add (Android_Model ('Tap30','https://s.cafebazaar.ir/1/icons/taxi.tap30.driver_512x512.png','App',150,'https://play.google.com/store?hl=en','Tap30','Tap30@yahoo.com', '09123333333'))
+    db.session.add (Android_Model ('Divar','https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png','App',100,'https://play.google.com/store?hl=en','Divar','info@divar.com', '09122222222',1))
+    db.session.add (Android_Model ('Pelak','https://s.cafebazaar.ir/1/icons/com.example.pelak_512x512.png','App',50,'https://play.google.com/store?hl=en','Pelak','info@pelak.com', '09122222222',1))
+    db.session.add (Android_Model ('Ding','https://s.cafebazaar.ir/1/icons/com.dinnng.passenger_512x512.png','App',50,'https://play.google.com/store?hl=en','Ding','info@ding.com', '09122222222',1))
+    db.session.add (Android_Model ('OstadKar','https://s.cafebazaar.ir/1/icons/ir.ostadkar.customer_512x512.png','App',200,'https://play.google.com/store?hl=en','Ostad Kar','info@ostad.com', '09122222222',1))
+    db.session.add (Android_Model ('Reyhoon','http://daramadinterneti.com/wp-content/uploads/2017/12/reyhoon-logo-300x232.png','App',100,'https://play.google.com/store?hl=en','Reyhoon','info@reyhoon.com', '09123241365',1))
+    db.session.add (Android_Model ('Digikala','https://is3-ssl.mzstatic.com/image/thumb/Purple122/v4/c4/5e/44/c45e444d-a6c4-bd86-41d7-d3072d6d12df/source/512x512bb.jpg','App',50,'https://play.google.com/store?hl=en','Digikala','info@digikala.com', '09121111111',2))
+    db.session.add (Android_Model ('CinemaTicket','https://avvalmarket.ir/apps/com.hampardaz.cinematicket/icon/512x512.png','App',50,'https://play.google.com/store?hl=en','Cinema Ticket','info@cinema.com', '09123241365',2))
+    db.session.add (Android_Model ('Snapp','https://getandroid.ir/uploads/posts/2017-03/1488433149_Snapp-icon.png','App',200,'https://play.google.com/store?hl=en','Snapp','info@snapp.com', '09122222222',2))
+    db.session.add (Android_Model ('SoccerStars','https://images-eu.ssl-images-amazon.com/images/I/91pslkY9oiL.png','Game',100,'https://play.google.com/store?hl=en','Soccer Company','info@soccer.com', '09122222222',2))
+    db.session.add (Android_Model ('Loop','https://is3-ssl.mzstatic.com/image/thumb/Purple115/v4/d2/3f/90/d23f906c-f0b8-90bb-d52e-1a46604e413e/AppIcon-1x_U007emarketing-85-220-8.jpeg/246x0w.jpg','Game',100,'https://play.google.com/store?hl=en','Loop Game','info@loop.com', '09122222222',2))
+    db.session.add (Android_Model ('Tap30','https://s.cafebazaar.ir/1/icons/taxi.tap30.driver_512x512.png','App',150,'https://play.google.com/store?hl=en','Tap30','Tap30@yahoo.com', '09123333333',2))
 
 
 
@@ -54,7 +54,7 @@ def initdb():
 
 
 
-    survey = Survey_Model ('survey1','description1')
+    survey = Survey_Model ('survey1','description1',1)
     db.session.add (survey)
     db.session.commit()
 
@@ -78,7 +78,7 @@ def initdb():
     db.session.commit()
 
 
-    survey2 = Survey_Model ('survey2','description2')
+    survey2 = Survey_Model ('survey2','description2',2)
     db.session.add (survey2)
     db.session.commit()
 

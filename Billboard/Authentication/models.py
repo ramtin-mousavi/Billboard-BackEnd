@@ -10,6 +10,14 @@ from Billboard.Apps.models import Android_Model
 from Billboard.Survey.models import Survey_Model
 
 
+#many to many relationship between users and surveys
+user_survey_table = db.Table ('user_survey_table',
+db.Column('user_id', db.Integer, db.ForeignKey('survey_model.id')),
+db.Column('survey_id', db.Integer, db.ForeignKey('user_model.id'))
+)
+
+
+
 class User_Model (db.Model, UserMixin):
 
     __tablename__ = 'user_model'
@@ -22,6 +30,7 @@ class User_Model (db.Model, UserMixin):
     role = db.Column (db.String (10) , nullable = False)
     advertised_apps = db.relationship ('Android_Model' , backref = 'user_model' , lazy = True)
     advertised_surveys = db.relationship ('Survey_Model' , backref = 'user_model' , lazy = True)
+    submitted_surveys = db.relationship("Survey_Model", secondary = user_survey_table)
 
     def __init__ (self , name , email , password, role):
 
@@ -58,6 +67,10 @@ class User_Model (db.Model, UserMixin):
         self.credit += cost
         db.session.commit()
 
+    def append_survey (self,survey):
+        self.submitted_surveys.append (survey)
+        db.session.commit()
+
 
     def serialize_one (self):
         return User_Model_Schema().dump(self).data
@@ -71,4 +84,4 @@ class User_Model (db.Model, UserMixin):
 class User_Model_Schema (ma.ModelSchema):
     class Meta:
         model = User_Model
-        exclude = ('pass_hash',)
+        exclude = ('pass_hash','submitted_surveys','advertised_apps', 'advertised_surveys')

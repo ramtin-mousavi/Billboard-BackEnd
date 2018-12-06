@@ -60,7 +60,7 @@ class Survey_Manager:
         user = User_Model.query.get (session['user_id'])
         survey = Survey_Model.query.get (id)
         if survey:
-            if (user not in survey.users):
+            if (survey not in user.submitted_surveys):
                 out = {'survey':survey.serialize_one(), 'status':'OK'}
                 return jsonify (out)
 
@@ -82,7 +82,7 @@ class Survey_Manager:
             survey = Survey_Model.query.get((Question_Model.query.get(itm.question_id)).survey_id)
             user = User_Model.query.get (session['user_id'])
 
-            if user not in survey.users:
+            if survey not in user.submitted_surveys:
 
                 # req is a list of selected items
                 #which each value in this list, is item's primary_key (id)
@@ -91,7 +91,7 @@ class Survey_Manager:
                     item.vote()
 
                 #add user to survey's users
-                survey.append_user (user)
+                user.append_survey (survey)
 
                 out = {'status':'OK'}
                 return jsonify (out)

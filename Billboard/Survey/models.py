@@ -3,14 +3,6 @@ from Billboard import DataBase as db
 from Billboard import MarshMallow as ma
 from flask_marshmallow import Marshmallow
 
-from Billboard.Authentication.models import User_Model
-
-
-#many to many relationship between users and surveys
-user_survey_table = db.Table ('user_survey_table',
-db.Column('user_id', db.Integer, db.ForeignKey('survey_model.id')),
-db.Column('survey_id', db.Integer, db.ForeignKey('user_model.id'))
-)
 
 
 
@@ -103,7 +95,6 @@ class Survey_Model (db.Model):
     approval_status = db.Column (db.String(20), nullable = False)
     credit = db.Column (db.Integer , nullable = False)
 
-    users = db.relationship("User_Model", secondary = user_survey_table)
 
     def __init__ (self , title , description, advertiser_id):
         self.title = title
@@ -124,9 +115,6 @@ class Survey_Model (db.Model):
         db.session.add (self)
         db.session.commit()
 
-    def append_user (self,user):
-        self.users.append (user)
-        db.session.commit()
 
     def serialize_one (self):
         return Survey_Model_Schema().dump(self).data
@@ -145,7 +133,7 @@ class Survey_Model (db.Model):
         approved_surveys = Survey_Model.query.filter (Survey_Model.approval_status == 'approved')
         surveys_to_show = []
         for survey in approved_surveys:
-            if user not in survey.users:
+            if survey not in user.submitted_surveys:
                 surveys_to_show.append (survey)
 
         return surveys_to_show
@@ -158,4 +146,4 @@ class Survey_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Survey_Model
-        exclude = ('users','approval_status')
+        exclude = ('approval_status',)
