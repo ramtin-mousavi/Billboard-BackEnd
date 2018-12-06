@@ -54,7 +54,7 @@ def initdb():
 
 
 
-    survey = Survey_Model ('survey1','description1',1,30)
+    survey = Survey_Model ('survey1','description1',1,30,100)
     db.session.add (survey)
     db.session.commit()
 
@@ -78,7 +78,7 @@ def initdb():
     db.session.commit()
 
 
-    survey2 = Survey_Model ('survey2','description2',2,30)
+    survey2 = Survey_Model ('survey2','description2',2,30,200)
     db.session.add (survey2)
     db.session.commit()
 
