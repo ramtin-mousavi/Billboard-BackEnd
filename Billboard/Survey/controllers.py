@@ -73,7 +73,6 @@ class Survey_Manager:
         return jsonify (out)
 
 
-surveys.add_url_rule('/api/getSurvey' , view_func = Survey_Manager.get_survey , methods = ['GET','POST'])
 surveys.add_url_rule('/api/showSurvey' , view_func = Survey_Manager.show_survey )
 surveys.add_url_rule('/api/fillSurvey/<int:id>' , view_func = Survey_Manager.fill_survey )
 surveys.add_url_rule('/api/submitFilling' , view_func = Survey_Manager.submit_filling , methods = ['GET','POST'])

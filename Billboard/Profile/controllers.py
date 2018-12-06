@@ -81,7 +81,7 @@ class Advertise_Stat:
 profile.add_url_rule('/api/getAdvertisedApps' , view_func = Advertise_Stat.get_advertised_apps )
 profile.add_url_rule('/api/getAdvertisedSurveys' , view_func = Advertise_Stat.get_advertised_surveys )
 profile.add_url_rule('/api/getAppStat/<int:app_id>' , view_func = Advertise_Stat.get_app_stat)
-profile.add_url_rule('/api/getAppStat/<int:survey_id>' , view_func = Advertise_Stat.get_survey_stat)
+profile.add_url_rule('/api/getSurveyStat/<int:survey_id>' , view_func = Advertise_Stat.get_survey_stat)
 
 
 class Advertising:
