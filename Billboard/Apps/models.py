@@ -71,6 +71,10 @@ class Android_Model (db.Model):
     def query_for_admin ():
         return Android_Model.query.filter (Android_Model.approval_status == 'pending')
 
+    @staticmethod
+    def query_for_advertiser (advertiser_id):
+        return Android_Model.query.filter_by (advertiser_id = advertiser_id)
+
 
     def serialize_one (self):
         return Android_Model_Schema().dump(self).data

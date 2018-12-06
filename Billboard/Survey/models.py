@@ -116,13 +116,6 @@ class Survey_Model (db.Model):
         db.session.commit()
 
 
-    def serialize_one (self):
-        return Survey_Model_Schema().dump(self).data
-
-    @staticmethod
-    def serialize_many (arg):
-        return Survey_Model_Schema(many = True).dump (arg).data
-
     @staticmethod
     def query_for_admin():
         return Survey_Model.query.filter (Survey_Model.approval_status == 'pending')
@@ -138,6 +131,17 @@ class Survey_Model (db.Model):
 
         return surveys_to_show
 
+    @staticmethod
+    def query_for_advertiser (advertiser_id):
+        return Survey_Model.query.filter_by (advertiser_id = advertiser_id)
+
+
+    def serialize_one (self):
+        return Survey_Model_Schema().dump(self).data
+
+    @staticmethod
+    def serialize_many (arg):
+        return Survey_Model_Schema(many = True).dump (arg).data    
 
 
 class Survey_Model_Schema (ma.ModelSchema):
