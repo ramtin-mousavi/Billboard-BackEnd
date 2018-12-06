@@ -62,6 +62,8 @@ class Survey_Manager:
 
                 #add user to survey's users
                 user.append_survey (survey)
+                #add credit of survey to user
+                user.charge (survey.credit)
 
                 out = {'status':'OK'}
                 return jsonify (out)
