@@ -12,36 +12,6 @@ class Survey_Manager:
 
     @staticmethod
     @login_required
-    def get_survey ():
-
-        req = request.get_json()
-
-        title = req ['name']
-        description = req ['description']
-        survey_questions = req ['questions']
-        user_id = session['user_id']
-
-        new_survey = Survey_Model (title, description, user_id)
-        new_survey.add_and_commit()
-
-        for question in survey_questions:
-            question_context = question ['context']
-            question_items = question ['items']
-
-            new_question = Question_Model (question_context, new_survey.id)
-            new_question.add_and_commit()
-
-            for item in question_items:
-                item_context = item ['context']
-                new_item = Item_Model (item_context, new_question.id)
-
-        out = {'status':'OK'}
-
-        return jsonify (out)
-
-
-    @staticmethod
-    @login_required
     def show_survey():
 
         surveys = Survey_Model.query_for_user(User_Model.query.get (session['user_id']))

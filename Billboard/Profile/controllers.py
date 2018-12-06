@@ -86,4 +86,48 @@ profile.add_url_rule('/api/getAppStat/<int:survey_id>' , view_func = Advertise_S
 
 class Advertising:
 
-    pass
+    @staticmethod
+    @login_required
+    def advertise_survey ():
+
+        req = request.get_json()
+
+        title = req ['name']
+        description = req ['description']
+        survey_questions = req ['questions']
+        user_id = session['user_id']
+
+        new_survey = Survey_Model (title, description, user_id)
+        new_survey.add_and_commit()
+
+        for question in survey_questions:
+            question_context = question ['context']
+            question_items = question ['items']
+
+            new_question = Question_Model (question_context, new_survey.id)
+            new_question.add_and_commit()
+
+            for item in question_items:
+                item_context = item ['context']
+                new_item = Item_Model (item_context, new_question.id)
+
+        out = {'status':'OK'}
+
+        return jsonify (out)
+
+
+    @staticmethod
+    @login_required
+    def advertise_app():
+
+        req = request.get_json()
+        user_id = session ['user_id']
+        new_app = Android_Model (req['name'], req['icon'], req['credit'], req['dlLink'], user_id)
+        new_app.add_and_commit()
+
+        out = {'status':'OK'}
+        return jsonify (out)
+
+
+profile.add_url_rule('/api/getSurvey' , view_func = Advertising.advertise_survey , methods = ['GET','POST'])
+profile.add_url_rule('/api/getApp' , view_func = Advertising.advertise_app , methods = ['GET','POST'])
