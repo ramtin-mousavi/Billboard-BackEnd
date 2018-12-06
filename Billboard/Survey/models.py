@@ -99,7 +99,7 @@ class Survey_Model (db.Model):
     advertise_date = db.Column(db.DateTime)
     expiration_date = db.Column(db.DateTime)
 
-    def __init__ (self , title , description, advertiser_id):
+    def __init__ (self , title , description, advertiser_id, duration):
         self.title = title
         self.description = description
         self.approval_status = 'pending'
