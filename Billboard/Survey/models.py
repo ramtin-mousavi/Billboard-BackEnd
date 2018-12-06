@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 
 class Item_Model (db.Model):
 
+    __tablename__ = 'item_model'
+
     id = db.Column(db.Integer, primary_key = True)
     context = db.Column (db.Text , nullable = False)
     question_id = db.Column(db.Integer, db.ForeignKey('question_model.id'), nullable=False)

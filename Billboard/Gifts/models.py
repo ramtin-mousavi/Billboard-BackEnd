@@ -9,6 +9,9 @@ from datetime import datetime
 
 
 class Gift_Model (db.Model):
+
+    __tablename__ = 'gift_model'
+    
     id = db.Column (db.Integer, primary_key = True)
     name =  db.Column(db.String(50), nullable = False)
     icon = db.Column (db.Text , nullable = False)
@@ -54,6 +57,8 @@ class Gift_Model_Schema (ma.ModelSchema):
 
 
 class Gift_History_Model (db.Model):
+
+    __tablename__ = 'gift_history_model'
 
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, nullable = False)
