@@ -71,6 +71,24 @@ class Authentication:
 
     @staticmethod
     @login_required
+    def get_user (user_id):
+
+        user = User_Model.query.get (int(user_id))
+        if user:
+
+            if session ['role'] == 'admin':
+                out = {'user':user.serialize_one(), 'status':'OK'}
+                return jsonify (out)
+
+            out = {'user':'', 'status':'access denied'}
+            return jsonify (out)
+
+        out = {'user':'', 'status':'wrong user_id'}
+        return jsonify (out)
+
+
+    @staticmethod
+    @login_required
     def logout ():
 
         user_id = session.pop ('user_id', None)
@@ -88,3 +106,4 @@ class Authentication:
 authentication.add_url_rule('/api/signup' , view_func = Authentication.sign_up , methods = ['POST' , 'GET'])
 authentication.add_url_rule('/api/login' , view_func = Authentication.login , methods = ['POST' , 'GET'])
 authentication.add_url_rule('/api/logout' , view_func = Authentication.logout)
+authentication.add_url_rule('/api/getUser/<int:user_id>' , view_func = Authentication.get_user)
