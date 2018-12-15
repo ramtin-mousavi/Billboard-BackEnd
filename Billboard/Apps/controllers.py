@@ -2,6 +2,7 @@ from flask import request, jsonify, session, Blueprint
 from flask_login import login_required
 
 from Billboard.Apps.models import Android_Model
+from flask_cors import  cross_origin
 
 apps = Blueprint('apps', __name__)
 
@@ -9,6 +10,7 @@ apps = Blueprint('apps', __name__)
 class Apps_Manager:
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def show_apps (filter=None):
 

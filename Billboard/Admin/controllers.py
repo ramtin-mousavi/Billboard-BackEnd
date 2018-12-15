@@ -4,6 +4,8 @@ from flask_login import login_required
 from Billboard.Apps.models import Android_Model
 from Billboard.Survey.models import Survey_Model
 
+from flask_cors import  cross_origin
+
 
 admin = Blueprint('admin', __name__)
 
@@ -11,6 +13,7 @@ admin = Blueprint('admin', __name__)
 class Admin:
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def get_pending_apps():
 
@@ -26,6 +29,7 @@ class Admin:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def approve_or_reject_apps (submit , app_id):
 
@@ -59,6 +63,7 @@ class Admin:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def get_pending_surveys ():
 
@@ -74,6 +79,7 @@ class Admin:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def approve_or_reject_surveys (submit , survey_id):
 

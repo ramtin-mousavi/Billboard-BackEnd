@@ -4,6 +4,8 @@ from flask_login import login_required
 from Billboard.Survey.models import Item_Model, Question_Model, Survey_Model
 from Billboard.Authentication.models import User_Model
 
+from flask_cors import  cross_origin
+
 
 surveys = Blueprint('surveys', __name__)
 
@@ -11,6 +13,7 @@ surveys = Blueprint('surveys', __name__)
 class Survey_Manager:
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def show_survey():
 
@@ -24,6 +27,7 @@ class Survey_Manager:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def fill_survey (id):
 
@@ -42,6 +46,7 @@ class Survey_Manager:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def submit_filling():
 

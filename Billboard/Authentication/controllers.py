@@ -3,6 +3,8 @@ from flask_login import login_required, login_user, logout_user
 
 from Billboard.Authentication.models import User_Model
 
+from flask_cors import  cross_origin
+
 
 authentication = Blueprint('authentication', __name__)
 
@@ -11,6 +13,7 @@ authentication = Blueprint('authentication', __name__)
 class Authentication:
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     def sign_up():
 
         if request.method == 'POST':
@@ -33,6 +36,7 @@ class Authentication:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     def login():
 
         if request.method == 'POST' :
@@ -70,6 +74,7 @@ class Authentication:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def get_user (user_id):
 
@@ -88,6 +93,7 @@ class Authentication:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def logout ():
 

@@ -4,6 +4,8 @@ from flask_login import login_required
 from Billboard.Apps.models import Android_Model
 from Billboard.Survey.models import Survey_Model, Question_Model, Item_Model
 
+from flask_cors import  cross_origin
+
 
 profile = Blueprint('profile', __name__)
 
@@ -11,6 +13,7 @@ profile = Blueprint('profile', __name__)
 class Advertise_Stat:
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def get_advertised_apps():
 
@@ -20,6 +23,7 @@ class Advertise_Stat:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def get_advertised_surveys():
 
@@ -29,6 +33,7 @@ class Advertise_Stat:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def get_app_stat (app_id):
 
@@ -58,6 +63,7 @@ class Advertise_Stat:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def get_survey_stat (survey_id):
 
@@ -96,6 +102,7 @@ profile.add_url_rule('/api/getSurveyStat/<int:survey_id>' , view_func = Advertis
 class Advertising:
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def advertise_survey ():
 
@@ -129,6 +136,7 @@ class Advertising:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def advertise_app():
 

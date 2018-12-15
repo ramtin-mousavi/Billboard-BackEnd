@@ -4,6 +4,9 @@ from flask_login import login_required
 from Billboard.Gifts.models import Gift_Model, Gift_History_Model
 from Billboard.Authentication.models import User_Model
 
+from flask_cors import  cross_origin
+
+
 gifts = Blueprint('gifts', __name__)
 
 
@@ -11,6 +14,7 @@ gifts = Blueprint('gifts', __name__)
 class Gift_Manager:
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def show_gifts ():
 
@@ -20,6 +24,7 @@ class Gift_Manager:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def buy_gift (gift_id):
 
@@ -52,6 +57,7 @@ class Gift_Manager:
 
 
     @staticmethod
+    @cross_origin(supports_credentials=True)
     @login_required
     def gift_history():
 
@@ -63,4 +69,4 @@ class Gift_Manager:
 
 gifts.add_url_rule('/api/giftshop' , view_func = Gift_Manager.show_gifts )
 gifts.add_url_rule('/api/shoppingresult/<int:gift_id>' , view_func = Gift_Manager.buy_gift , methods = ['POST' , 'GET'])
-gifts.add_url_rule('/api/gifthistory/' , view_func = Gift_Manager.gift_history)
+gifts.add_url_rule('/api/gifthistory' , view_func = Gift_Manager.gift_history)
