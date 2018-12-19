@@ -16,17 +16,17 @@ class Apps_Manager:
 
         if filter:
             if int (filter) == 3:
-                apps = Android_Model.filter_query ('Game')
+                apps = Android_Model.query_ ('approved', filt = 'Game')
                 out = {'apps':Android_Model.serialize_many (apps) , 'status': 'OK'}
                 return jsonify (out)
 
             elif int (filter) == 2:
-                apps = Android_Model.filter_query ('App')
+                apps = Android_Model.query_ ('approved', filt = 'App')
                 out = {'apps':Android_Model.serialize_many (apps) , 'status': 'OK'}
                 return jsonify (out)
 
             elif int (filter) == 1:
-                apps = Android_Model.all_query()
+                apps = Android_Model.query_ ('approved')
                 out = {'apps':Android_Model.serialize_many (apps) , 'status': 'OK'}
                 return jsonify (out)
 
@@ -34,7 +34,7 @@ class Apps_Manager:
                 out = {'apps':'', 'status':'filter is not valid'}
                 return jsonify (out)
 
-        apps = Android_Model.all_query()
+        apps = Android_Model.query_ ('approved')
         out = {'apps':Android_Model.serialize_many (apps) , 'status': 'OK'}
         return jsonify (out)
 

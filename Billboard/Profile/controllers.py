@@ -17,7 +17,7 @@ class Advertise_Stat:
     @login_required
     def get_advertised_apps():
 
-        apps = Android_Model.serialize_many(Android_Model.query_for_advertiser(session['user_id']))
+        apps = Android_Model.serialize_many(Android_Model.query_('all',advertiser_id = session['user_id']))
         out = {'apps':apps, 'status':'OK'}
         return jsonify (out)
 
@@ -40,7 +40,7 @@ class Advertise_Stat:
         app = Android_Model.query.get (app_id)
         if app:
 
-            if app in Android_Model.query_for_advertiser (session['user_id']):
+            if app in Android_Model.query_ ('all', advertiser_id = session['user_id']):
 
                 if app.approval_status == 'pending':
                     out = {'app_stat':app.serialize_one(), 'status':'app is waiting to be submitted'}

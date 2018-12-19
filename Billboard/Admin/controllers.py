@@ -19,7 +19,7 @@ class Admin:
 
         if session ['role'] == 'admin':
 
-            apps = Android_Model.query_for_admin()
+            apps = Android_Model.query_ ('pending')
             out = {'apps':Android_Model.serialize_many(apps), 'status':'OK'}
             return jsonify (out)
 

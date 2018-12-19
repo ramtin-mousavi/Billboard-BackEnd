@@ -65,21 +65,21 @@ class Android_Model (db.Model):
 
 
     @staticmethod
-    def all_query ():
-        return Android_Model.query.filter (Android_Model.approval_status == 'approved')
+    def query_ (status, filt = None, advertiser_id = None):
 
-    @staticmethod
-    def filter_query (fil):
-        return Android_Model.query.filter_by (category = fil , approval_status = 'approved')
+        assert (status in ['approved', 'rejected', 'pending', 'all'])
+
+        if advertiser_id:
+            if filt:
+                return Android_Model.query.filter_by (category = filt, advertiser_id = advertiser_id)
+            return Android_Model.query.filter_by (advertiser_id = advertiser_id)
+
+        if filt:
+            return Android_Model.query.filter_by (category = filt, approval_status = status)
+
+        return Android_Model.query.filter_by (approval_status = status)
 
 
-    @staticmethod
-    def query_for_admin ():
-        return Android_Model.query.filter (Android_Model.approval_status == 'pending')
-
-    @staticmethod
-    def query_for_advertiser (advertiser_id):
-        return Android_Model.query.filter_by (advertiser_id = advertiser_id)
 
 
     def serialize_one (self):
@@ -93,4 +93,3 @@ class Android_Model (db.Model):
 class Android_Model_Schema (ma.ModelSchema):
     class Meta:
         model = Android_Model
-        exclude = ('approval_status',)
