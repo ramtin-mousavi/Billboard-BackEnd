@@ -61,15 +61,18 @@ Logout API:
 ----------------------------------------------------------------------------------------
 Get User API:
 
-	url: /api/getUser/<int:user_id>
+	url: /api/getUser
 
-	method: GET
+	method: POST
+
+	json request: {"user_id": user_id}
 
 	json response: {"user":user_serialize, "status":status}
 
 		status:			"OK" if no problem,
 						"access denied" if request is not from admin,
 						"wrong user_id" if user does not exist
+						"method is not POST" if method is not POST
 
 		user_serialize:	{"id": 2,
 						"email": "ramtin@ymail.com",
@@ -77,4 +80,4 @@ Get User API:
 						"credit": 2000,
 						"role": "admin"}
 
--------------------------------------------------------------------------------------				
+-------------------------------------------------------------------------------------
