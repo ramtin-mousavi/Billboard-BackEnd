@@ -76,19 +76,26 @@ class Authentication:
     @staticmethod
     @cross_origin(supports_credentials=True)
     @login_required
-    def get_user (user_id):
+    def get_user ():
 
-        user = User_Model.query.get (int(user_id))
-        if user:
+        if request.method == 'POST' :
 
-            if session ['role'] == 'admin':
-                out = {'user':user.serialize_one(), 'status':'OK'}
+            req = request.get_json()
+
+            user = User_Model.query.get (int(req['user_id']))
+            if user:
+
+                if session ['role'] == 'admin':
+                    out = {'user':user.serialize_one(), 'status':'OK'}
+                    return jsonify (out)
+
+                out = {'user':'', 'status':'access denied'}
                 return jsonify (out)
 
-            out = {'user':'', 'status':'access denied'}
+            out = {'user':'', 'status':'wrong user_id'}
             return jsonify (out)
 
-        out = {'user':'', 'status':'wrong user_id'}
+        out = {'user':'', 'status':'method is not POST'}
         return jsonify (out)
 
 
@@ -112,4 +119,4 @@ class Authentication:
 authentication.add_url_rule('/api/signup' , view_func = Authentication.sign_up , methods = ['POST' , 'GET'])
 authentication.add_url_rule('/api/login' , view_func = Authentication.login , methods = ['POST' , 'GET'])
 authentication.add_url_rule('/api/logout' , view_func = Authentication.logout)
-authentication.add_url_rule('/api/getUser/<int:user_id>' , view_func = Authentication.get_user)
+authentication.add_url_rule('/api/getUser' , view_func = Authentication.get_user)
