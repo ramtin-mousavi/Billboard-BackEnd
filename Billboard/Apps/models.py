@@ -78,6 +78,16 @@ class Android_Model (db.Model):
         return Android_Model.query.filter (Android_Model.approval_status == 'pending')
 
     @staticmethod
+    def query_for_user (user):
+        approved_apps = Android_Model.query.filter (Android_Model.approval_status == 'approved')
+        apps_to_show = []
+        for app in approved_apps:
+            if app not in user.installed_android_apps:
+                apps_to_show.append (app)
+
+        return apps_to_show
+
+    @staticmethod
     def query_for_advertiser (advertiser_id):
         return Android_Model.query.filter_by (advertiser_id = advertiser_id)
 
