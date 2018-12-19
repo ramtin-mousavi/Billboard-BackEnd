@@ -7,3 +7,4 @@ marshmallow-sqlalchemy == 0.15.0
 sqlalchemy == 1.2.12
 flask-sqlalchemy == 2.3.2
 Flask-script = 2.0.6
+Flask-Cors = 3.0.7
