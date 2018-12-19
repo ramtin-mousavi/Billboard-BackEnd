@@ -116,7 +116,7 @@ class Authentication:
 
 
 
-authentication.add_url_rule('/api/signup' , view_func = Authentication.sign_up , methods = ['POST' , 'GET'])
-authentication.add_url_rule('/api/login' , view_func = Authentication.login , methods = ['POST' , 'GET'])
+authentication.add_url_rule('/api/signup' , view_func = Authentication.sign_up, methods = ['POST' , 'GET'])
+authentication.add_url_rule('/api/login' , view_func = Authentication.login, methods = ['POST' , 'GET'])
 authentication.add_url_rule('/api/logout' , view_func = Authentication.logout)
-authentication.add_url_rule('/api/getUser' , view_func = Authentication.get_user)
+authentication.add_url_rule('/api/getUser' , view_func = Authentication.get_user, methods = ['POST' , 'GET'])
