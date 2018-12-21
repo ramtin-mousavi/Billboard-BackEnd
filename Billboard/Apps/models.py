@@ -14,6 +14,7 @@ class Android_Model (db.Model):
 
     id = db.Column (db.Integer, primary_key = True)
     name =  db.Column(db.String(50), nullable = False)
+    package_name = db.Column(db.String(50), nullable = False, unique = True)
     icon = db.Column (db.Text , nullable = False)
     category = db.Column (db.String (30) , nullable = False)
     credit = db.Column (db.Integer)
@@ -25,27 +26,23 @@ class Android_Model (db.Model):
     expiration_date = db.Column(db.DateTime)
 
 
-    #valid_approvals = ['approved','rejected','pending']
-    valid_categories = ['Game' , 'App']
+    def __init__ (self, name, package_name, icon, category, credit, dlLink, advertiser_id, duration):
+
+        assert (category in ['Game', 'App'])
+
+        self.name = name.lower()
+        self.package_name = package_name.lower()
+        self.icon = icon
+        self.category = category
+        self.credit = credit
+        self.count = 0
+        self.download_link = dlLink
+        self.advertiser_id = advertiser_id
+        self.approval_status = 'pending'
+        self.advertise_date = datetime.now()
+        self.expiration_date = self.advertise_date + timedelta (days = duration)
 
 
-    def __init__ (self, name, icon, category, credit, dlLink, advertiser_id, duration):
-
-        if category in Android_Model.valid_categories:
-
-            self.name = name.lower()
-            self.icon = icon
-            self.category = category
-            self.credit = credit
-            self.count = 0
-            self.download_link = dlLink
-            self.advertiser_id = advertiser_id
-            self.approval_status = 'pending'
-            self.advertise_date = datetime.now()
-            self.expiration_date = self.advertise_date + timedelta (days = duration)
-
-        else:
-            raise ValueError()
 
     def charge (self,count):
         self.count += count
@@ -76,10 +73,11 @@ class Android_Model (db.Model):
 
         if filt:
             return Android_Model.query.filter_by (category = filt, approval_status = status)
-
         return Android_Model.query.filter_by (approval_status = status)
 
 
+    def query_by_package_name (package_name):
+        return Android_Model.query.filter_by (package_name = package_name).first()
 
 
     def serialize_one (self):
