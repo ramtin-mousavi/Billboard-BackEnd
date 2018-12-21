@@ -63,8 +63,8 @@ class User_Model (db.Model, UserMixin):
 
 
     @staticmethod
-    def email_query (req):
-        return User_Model.query.filter_by (email = req).first()
+    def query_by_email (email):
+        return User_Model.query.filter_by (email = email).first()
 
 
     def discharge (self , cost):
