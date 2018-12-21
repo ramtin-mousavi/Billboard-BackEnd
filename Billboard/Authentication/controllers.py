@@ -85,11 +85,7 @@ class Authentication:
             user = User_Model.query.get (int(req['user_id']))
             if user:
 
-                if session ['role'] == 'admin':
-                    out = {'user':user.serialize_one(), 'status':'OK'}
-                    return jsonify (out)
-
-                out = {'user':'', 'status':'access denied'}
+                out = {'user':user.serialize_one(), 'status':'OK'}
                 return jsonify (out)
 
             out = {'user':'', 'status':'wrong user_id'}
