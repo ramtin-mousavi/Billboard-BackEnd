@@ -98,7 +98,7 @@ profile.add_url_rule('/api/getAdvertisedSurveys' , view_func = Advertise_Stat.ge
 profile.add_url_rule('/api/getAppStat/<int:app_id>' , view_func = Advertise_Stat.get_app_stat)
 profile.add_url_rule('/api/getSurveyStat/<int:survey_id>' , view_func = Advertise_Stat.get_survey_stat)
 
-
+from Billboard import expire
 class Advertising:
 
     @staticmethod
@@ -142,11 +142,15 @@ class Advertising:
 
         req = request.get_json(force = True)
         user_id = session ['user_id']
-        new_app = Android_Model (req['name'], req['icon'], req['category'], int(req['credit']), req['dlLink'], user_id, int(req['duration']))
+        new_app = Android_Model (req['name'],str(req['name']), req['icon'], req['category'], int(req['credit']), req['dlLink'], user_id, int(req['duration']))
+        expire.apply_async(args= [new_app.id], countdown = 10)
         new_app.add_and_commit()
+
 
         out = {'status':'OK'}
         return jsonify (out)
+
+
 
 
 profile.add_url_rule('/api/getSurvey' , view_func = Advertising.advertise_survey , methods = ['GET','POST'])
