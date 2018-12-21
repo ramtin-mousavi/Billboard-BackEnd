@@ -17,7 +17,7 @@ db.Column('survey_id', db.Integer, db.ForeignKey('user_model.id'))
 )
 
 #many to many relationship between users and android apps
-user_survey_table = db.Table ('user_android_table',
+user_android_table = db.Table ('user_android_table',
 db.Column('user_id', db.Integer, db.ForeignKey('android_model.id')),
 db.Column('android_id', db.Integer, db.ForeignKey('user_model.id'))
 )
