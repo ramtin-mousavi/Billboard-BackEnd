@@ -16,6 +16,13 @@ db.Column('user_id', db.Integer, db.ForeignKey('survey_model.id')),
 db.Column('survey_id', db.Integer, db.ForeignKey('user_model.id'))
 )
 
+#many to many relationship between users and android apps
+user_survey_table = db.Table ('user_android_table',
+db.Column('user_id', db.Integer, db.ForeignKey('android_model.id')),
+db.Column('android_id', db.Integer, db.ForeignKey('user_model.id'))
+)
+
+
 
 
 class User_Model (db.Model, UserMixin):
@@ -31,6 +38,7 @@ class User_Model (db.Model, UserMixin):
     advertised_apps = db.relationship ('Android_Model' , backref = 'user_model' , lazy = True)
     advertised_surveys = db.relationship ('Survey_Model' , backref = 'user_model' , lazy = True)
     submitted_surveys = db.relationship("Survey_Model", secondary = user_survey_table)
+    installed_android_apps = db.relationship("Android_Model", secondary = user_android_table)
 
     def __init__ (self , name , email , password, role):
 
@@ -71,6 +79,10 @@ class User_Model (db.Model, UserMixin):
         self.submitted_surveys.append (survey)
         db.session.commit()
 
+    def append_android_app (self, android_app):
+        self.installed_android_apps.append (android_app)
+        db.session.commit()
+
 
     def serialize_one (self):
         return User_Model_Schema().dump(self).data
@@ -84,4 +96,4 @@ class User_Model (db.Model, UserMixin):
 class User_Model_Schema (ma.ModelSchema):
     class Meta:
         model = User_Model
-        exclude = ('pass_hash','submitted_surveys','advertised_apps', 'advertised_surveys')
+        exclude = ('pass_hash','submitted_surveys','advertised_apps', 'advertised_surveys', 'installed_android_apps')
