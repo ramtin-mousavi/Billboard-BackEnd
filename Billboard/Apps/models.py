@@ -62,9 +62,24 @@ class Android_Model (db.Model):
 
 
     @staticmethod
-    def query_ (status, filt = None, advertiser_id = None):
+    def query_ (status, user = None, filt = None, advertiser_id = None):
 
         assert (status in ['approved', 'rejected', 'pending', 'all'])
+
+        if user:
+            apps_to_show = []
+            
+            if filt:
+                apps = Android_Model.query.filter_by (category = filt, approval_status = status)
+            else:
+                apps = Android_Model.query.filter_by (approval_status = status)
+
+            for app in apps:
+                if app not in user.installed_android_apps:
+                    apps_to_show.append (app)
+
+            return apps_to_show
+
 
         if advertiser_id:
             if filt:
@@ -73,6 +88,7 @@ class Android_Model (db.Model):
 
         if filt:
             return Android_Model.query.filter_by (category = filt, approval_status = status)
+
         return Android_Model.query.filter_by (approval_status = status)
 
 

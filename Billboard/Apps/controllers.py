@@ -2,6 +2,8 @@ from flask import request, jsonify, session, Blueprint
 from flask_login import login_required
 
 from Billboard.Apps.models import Android_Model
+from Billboard.Authentication.models import User_Model
+
 from flask_cors import  cross_origin
 
 apps = Blueprint('apps', __name__)
@@ -14,19 +16,21 @@ class Apps_Manager:
     @login_required
     def show_apps (filter=None):
 
+        user = User_Model.query.get (session['user_id'])
+
         if filter:
             if int (filter) == 3:
-                apps = Android_Model.query_ ('approved', filt = 'Game')
+                apps = Android_Model.query_ ('approved', filt = 'Game', user = user)
                 out = {'apps':Android_Model.serialize_many (apps) , 'status': 'OK'}
                 return jsonify (out)
 
             elif int (filter) == 2:
-                apps = Android_Model.query_ ('approved', filt = 'App')
+                apps = Android_Model.query_ ('approved', filt = 'App', user = user)
                 out = {'apps':Android_Model.serialize_many (apps) , 'status': 'OK'}
                 return jsonify (out)
 
             elif int (filter) == 1:
-                apps = Android_Model.query_ ('approved')
+                apps = Android_Model.query_ ('approved', user = user)
                 out = {'apps':Android_Model.serialize_many (apps) , 'status': 'OK'}
                 return jsonify (out)
 
@@ -34,7 +38,7 @@ class Apps_Manager:
                 out = {'apps':'', 'status':'filter is not valid'}
                 return jsonify (out)
 
-        apps = Android_Model.query_ ('approved')
+        apps = Android_Model.query_ ('approved', user = user)
         out = {'apps':Android_Model.serialize_many (apps) , 'status': 'OK'}
         return jsonify (out)
 
@@ -62,7 +66,7 @@ class Apps_Manager:
 
                 out = {'app':'', 'status':'user has already installed this app'}
                 return jsonify (out)
-                
+
             out = {'app':'', 'status':'wrong package_name'}
             return jsonify (out)
 
