@@ -68,7 +68,7 @@ class Android_Model (db.Model):
 
         if user:
             apps_to_show = []
-            
+
             if filt:
                 apps = Android_Model.query.filter_by (category = filt, approval_status = status)
             else:
@@ -92,8 +92,8 @@ class Android_Model (db.Model):
         return Android_Model.query.filter_by (approval_status = status)
 
 
-    def query_by_package_name (package_name):
-        return Android_Model.query.filter_by (package_name = package_name).first()
+    #def query_by_package_name (package_name):
+    #    return Android_Model.query.filter_by (package_name = package_name).first()
 
 
     def serialize_one (self):
