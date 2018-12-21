@@ -3,6 +3,7 @@ import os
 
 from Billboard import DataBase as db
 from Billboard import app
+from Billboard.Jobs.jobs import run_schedule
 from Billboard.Authentication.models import User_Model
 from Billboard.Apps.models import Android_Model
 from Billboard.Gifts.models import Gift_Model
@@ -10,6 +11,7 @@ from Billboard.Survey.models import Survey_Model, Question_Model, Item_Model
 
 from flask_script import Manager, prompt_bool
 
+from threading import Thread
 
 manager = Manager(app)
 
@@ -124,8 +126,16 @@ def dropdb():
 
 @manager.command
 def run():
+
     app.secret_key = os.urandom(12)
-    app.run(debug=True, host='0.0.0.0')
+    t = Thread(target=run_schedule)
+    t.daemon = True
+    t.start()
+    app.run(debug = True, host='0.0.0.0')
+
+
+
+
 
 if __name__ == '__main__':
     manager.run()
