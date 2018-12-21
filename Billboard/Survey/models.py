@@ -116,6 +116,10 @@ class Survey_Model (db.Model):
         self.approval_status = 'rejected'
         db.session.commit()
 
+    def expire (self):
+        self.approval_status = 'expired'
+        db.session.commit()
+
     def add_and_commit (self):
         db.session.add (self)
         db.session.commit()
@@ -139,7 +143,7 @@ class Survey_Model (db.Model):
             return Survey_Model.query.filter_by (advertiser_id = advertiser_id)
 
         return Survey_Model.query.filter_by (approval_status = status)
-        
+
 
 
     def serialize_one (self):

@@ -60,6 +60,10 @@ class Android_Model (db.Model):
         self.approval_status = 'rejected'
         db.session.commit()
 
+    def expire (self):
+        self.approval_status = 'expired'
+        db.session.commit()
+
 
     @staticmethod
     def query_ (status, user = None, filt = None, advertiser_id = None):
