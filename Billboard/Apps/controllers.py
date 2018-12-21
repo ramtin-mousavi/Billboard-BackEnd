@@ -39,5 +39,37 @@ class Apps_Manager:
         return jsonify (out)
 
 
+    @staticmethod
+    @cross_origin(supports_credentials=True)
+    @login_required
+    def install_app ():
+
+        if request.method == 'POST':
+
+            package_name = request.get_json(force = True).get('package_name')
+            user = User_Model.query.get (session['user_id'])
+            app = Android_Model.query_by_package_name (package_name)
+
+            if app:
+                if app not in user.installed_android_apps:
+
+                    user.append_android_app (app)
+                    user.charge (app.credit)
+
+                    out = {'app':app.serialize_one(), 'status':'OK'}
+                    return jsonify (out)
+
+
+                out = {'app':'', 'status':'user has already installed this app'}
+                return jsonify (out)
+                
+            out = {'app':'', 'status':'wrong package_name'}
+            return jsonify (out)
+
+        out = {'app':'', 'status':'method is not POST'}
+        return jsonify (out)
+
+
 apps.add_url_rule('/api/showApps/<int:filter>' , view_func = Apps_Manager.show_apps)
 apps.add_url_rule('/api/showApps/' , view_func = Apps_Manager.show_apps)
+apps.add_url_rule('/api/installApp/' , view_func = Apps_Manager.install_app, methods = ['GET', 'POST'])
