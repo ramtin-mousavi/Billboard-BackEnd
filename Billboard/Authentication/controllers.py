@@ -46,7 +46,7 @@ class Authentication:
             email = req["email"]
             password = req["password"]
 
-            stored_user = User_Model.email_query (email)
+            stored_user = User_Model.query_by_email (email)
 
             if (stored_user is not None) and (stored_user.check_password(password)):
 
