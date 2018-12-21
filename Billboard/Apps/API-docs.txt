@@ -40,13 +40,13 @@ Add App To Installed apps_serialize:
 
 	method: GET
 
-	json response: {"apps":apps_serialize , "status":status}
+	json response: {"apps":app_serialize , "status":status}
 
 		status: 		"OK" if no problem,
 						"user has already installed this app" if app is available in user installed apps,
 						"wrong app_id" if app with this id does not exist
 
-		apps_serialize:	[  {"id": 1,
+		app_serialize:	  {"id": 1,
 							"name": "divar",
 							"advertise_date": "2018-12-06T15:26:10.952494+00:00",
 							"category": "App",
@@ -56,4 +56,4 @@ Add App To Installed apps_serialize:
 							"expiration_date": "2019-01-05T15:26:10.952494+00:00",
 							"icon": "https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png"
 							}
-						, ...]
+						
