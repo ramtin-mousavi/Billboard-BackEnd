@@ -122,23 +122,24 @@ class Survey_Model (db.Model):
 
 
     @staticmethod
-    def query_for_admin():
-        return Survey_Model.query.filter (Survey_Model.approval_status == 'pending')
+    def query_ (status, user = None, advertiser_id = None):
 
-    @staticmethod
-    def query_for_user (user):
+        assert (status in ['approved', 'rejected', 'pending', 'all'])
 
-        approved_surveys = Survey_Model.query.filter (Survey_Model.approval_status == 'approved')
-        surveys_to_show = []
-        for survey in approved_surveys:
-            if survey not in user.submitted_surveys:
-                surveys_to_show.append (survey)
+        if user:
+            surveys = Survey_Model.query.filter_by (approval_status = status)
+            surveys_to_show = []
+            for survey in surveys:
+                if survey not in user.submitted_surveys:
+                    surveys_to_show.append (survey)
 
-        return surveys_to_show
+            return surveys_to_show
 
-    @staticmethod
-    def query_for_advertiser (advertiser_id):
-        return Survey_Model.query.filter_by (advertiser_id = advertiser_id)
+        if advertiser_id:
+            return Survey_Model.query.filter_by (advertiser_id = advertiser_id)
+
+        return Survey_Model.query.filter_by (approval_status = status)
+        
 
 
     def serialize_one (self):
@@ -155,4 +156,3 @@ class Survey_Model_Schema (ma.ModelSchema):
 
     class Meta:
         model = Survey_Model
-        exclude = ('approval_status',)

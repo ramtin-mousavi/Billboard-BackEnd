@@ -69,7 +69,7 @@ class Admin:
 
         if session ['role'] == 'admin':
 
-            surveys = Survey_Model.query_for_admin()
+            surveys = Survey_Model.query_('pending')
             out = {'surveys':Survey_Model.serialize_many(surveys), 'status':'OK'}
             return jsonify (out)
 

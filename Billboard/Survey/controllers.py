@@ -17,7 +17,7 @@ class Survey_Manager:
     @login_required
     def show_survey():
 
-        surveys = Survey_Model.query_for_user(User_Model.query.get (session['user_id']))
+        surveys = Survey_Model.query_ ('approved', user = User_Model.query.get (session['user_id']))
         if (len (surveys) != 0):
             out = {'surveys':Survey_Model.serialize_many(surveys),'status':'OK'}
             return jsonify (out)

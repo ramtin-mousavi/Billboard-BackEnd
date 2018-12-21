@@ -27,7 +27,7 @@ class Advertise_Stat:
     @login_required
     def get_advertised_surveys():
 
-        surveys = Survey_Model.serialize_many(Survey_Model.query_for_advertiser(session['user_id']))
+        surveys = Survey_Model.serialize_many(Survey_Model.query_('all', advertiser_id = session['user_id']))
         out = {'surveys':surveys, 'status':'OK'}
         return jsonify (out)
 
@@ -71,7 +71,7 @@ class Advertise_Stat:
 
         if survey:
 
-            if survey in Survey_Model.query_for_advertiser (session['user_id']):
+            if survey in Survey_Model.query_ ('all', advertiser_id = session['user_id']):
 
                 if survey.approval_status == 'pending':
                     out = {'survey_stat':survey.serialize_one(), 'status':'survey is waiting to be submitted'}
