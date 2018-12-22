@@ -64,6 +64,10 @@ class Android_Model (db.Model):
         self.approval_status = 'expired'
         db.session.commit()
 
+    def increment_count (self):
+        self.count += 1
+        db.session.commit()
+
 
     @staticmethod
     def query_ (status, user = None, filt = None, advertiser_id = None):
