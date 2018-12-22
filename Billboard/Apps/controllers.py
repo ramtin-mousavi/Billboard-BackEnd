@@ -60,6 +60,7 @@ class Apps_Manager:
 
                 user.append_android_app (app)
                 user.charge (app.credit)
+                app.increment_count()
 
                 out = {'app':app.serialize_one(), 'status':'OK'}
                 return jsonify (out)
