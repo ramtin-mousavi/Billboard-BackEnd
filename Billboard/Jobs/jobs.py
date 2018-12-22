@@ -3,7 +3,7 @@ import time
 import datetime
 
 from Billboard.Survey.models import Survey_Model
-from Billboard.Android_Model.models import Android_Model
+from Billboard.Apps.models import Android_Model
 
 
 def run_schedule():
@@ -11,7 +11,7 @@ def run_schedule():
     schedule.every().day.at("00:00").do(expire_surveys)
     while True:
         schedule.run_pending()
-        time.sleep(70)
+        time.sleep(60)
 
 
 def expire_apps ():
