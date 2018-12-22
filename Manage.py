@@ -3,7 +3,7 @@ import os
 
 from Billboard import DataBase as db
 from Billboard import app
-from Billboard.Jobs.jobs import run_schedule
+from Billboard.Jobs.jobs import Schedule
 from Billboard.Authentication.models import User_Model
 from Billboard.Apps.models import Android_Model
 from Billboard.Gifts.models import Gift_Model
@@ -128,7 +128,7 @@ def dropdb():
 def run():
 
     app.secret_key = os.urandom(12)
-    t = Thread(target=run_schedule)
+    t = Thread(target=Schedule.run_schedule)
     t.daemon = True
     t.start()
     app.run(debug = True, host='0.0.0.0')
