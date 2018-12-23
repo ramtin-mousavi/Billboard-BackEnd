@@ -5,7 +5,7 @@ from threading import Thread
 from Billboard import DataBase as db
 from Billboard import app
 from Billboard.Jobs.jobs import Schedule
-from Test import make_instances
+from Instances import make_instances
 
 from flask_script import Manager, prompt_bool
 
