@@ -18,7 +18,7 @@ class Authentication:
 
         if request.method == 'POST':
 
-            req = request.get_json()
+            req = request.get_json(force = True)
 
             name = req["name"]
             email = req["email"]
@@ -41,7 +41,7 @@ class Authentication:
 
         if request.method == 'POST' :
 
-            req = request.get_json()
+            req = request.get_json(force = True)
 
             email = req["email"]
             password = req["password"]
@@ -80,7 +80,7 @@ class Authentication:
 
         if request.method == 'POST' :
 
-            req = request.get_json()
+            req = request.get_json(force = True)
 
             user = User_Model.query.get (int(req['user_id']))
             if user:
