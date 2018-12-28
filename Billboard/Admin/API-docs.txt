@@ -1,14 +1,14 @@
 Non Approved Apps For Admin API:
 
 	url: /api/getPendingApps
-	
+
 	method: GET
-	
+
 	json response: {"apps":apps_serialize, "status": status}
-	
+
 		status:				"OK" if no problem,
-							"asscess denied" if user's role is not 'admin' 
-						
+							"asscess denied" if user's role is not 'admin'
+
 		apps_serialize:		[  {"id": 1,
 								"name": "divar",
 								"advertise_date": "2018-12-06T15:26:10.952494+00:00",
@@ -19,30 +19,30 @@ Non Approved Apps For Admin API:
 								"expiration_date": "2019-01-05T15:26:10.952494+00:00",
 								"icon": "https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png"
 								}
-								
+
 							, ...]
-							
+
 ------------------------------------------------------------------------------------------------
 Approve Or Reject Apps API:
 
 	url: /api/approveOrRejectApps/<string:submit>/<int:app_id>
-	
+
 		url parameters:
 			string: submit 		#(required) valid strings are just 'approve' and 'reject'
 			int: app_id			#(required) primary key of app to be reject or approve
-			
+
 	method: GET
-	
+
 	json response: {"app":app_serialize , "submit": submit_status, "status": status}
-	
+
 		status:				"OK" if no problem,
 							"submit command is wrong" if submit string is other than 'approve' or 'reject',
 							"app id is wrong" if app with this id is not in database,
-							"asscess denied" if user's role is not 'admin' 
-							
+							"asscess denied" if user's role is not 'admin'
+
 		submit:				"reject" if app is rejected,
 							"approve" if app is approved
-		
+
 		app_serialize:		    {"id": 1,
 								"name": "divar",
 								"advertise_date": "2018-12-06T15:26:10.952494+00:00",
@@ -53,21 +53,21 @@ Approve Or Reject Apps API:
 								"expiration_date": "2019-01-05T15:26:10.952494+00:00",
 								"icon": "https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png"
 								}
-							
+
 
 -----------------------------------------------------------------------------------------------
 
 Non Approved Surveys For Admin API:
 
 	url: /api/getPendingSurveys
-	
+
 	method: GET
-	
+
 	json response: {"surveys":surveys_serialize, "status": status}
-	
+
 		status:				"OK" if no problem,
-							"asscess denied" if user's role is not 'admin' 
-						
+							"asscess denied" if user's role is not 'admin'
+
 		surveys_serialize:		[   {"id": 1,
 									"title": "survey1"
 									"description": "description1",
@@ -80,40 +80,40 @@ Non Approved Surveys For Admin API:
 																"id": 4,
 																"vote_count": 1
 																},
-																
+
 															,...	#other items
 															]
 													},
-										
+
 												,...	#other questions
 												],
-												
+
 									}
-									
+
 								,...	#other surveys
 								]
-							
+
 ------------------------------------------------------------------------------------------------
 Approve Or Reject Surveys API:
 
 	url: /api/approveOrRejectSurveys/<string:submit>/<int:survey_id>
-	
+
 		url parameters:
 			string: submit 		#(required) valid strings are just 'approve' and 'reject'
 			int: survey_id			#(required) primary key of survey to be reject or approve
-			
+
 	method: GET
-	
+
 	json response: {"survey":survey_serialize , "submit": submit_status, "status": status}
-	
+
 		status:				"OK" if no problem,
 							"submit command is wrong" if submit string is other than 'approve' or 'reject',
 							"survey id is wrong" if survey with this id is not in database,
-							"asscess denied" if user's role is not 'admin' 
-							
+							"asscess denied" if user's role is not 'admin'
+
 		submit:				"reject" if survey is rejected,
 							"approve" if survey is approved
-		
+
 		survey_serialize:		{"id": 1,
 								"title": "survey1"
 								"description": "description1",
@@ -126,14 +126,42 @@ Approve Or Reject Surveys API:
 															"id": 4,
 															"vote_count": 1
 															},
-															
+
 														,...	#other items
 														]
 												},
-											
+
 											,...	#other questions
-											]			
+											]
 							}
-							
+
 
 -----------------------------------------------------------------------------------------------
+Get Users Count:
+
+	url: /api/userCount
+
+	method: GET
+
+	json response:	{"user_count": user_count, "status":status}
+
+		status: 		"OK" if no problem,
+						"asscess denied" if user's role is not 'admin'
+
+		user_count: 	an integer to show users count
+
+------------------------------------------------------------------------------------------------
+Get Active Count:
+
+	url: /api/adsCount
+
+	method: GET
+
+	json response:	{"ads_count": ads_count, "status":status}
+
+		status: 		"OK" if no problem,
+						"asscess denied" if user's role is not 'admin'
+
+		user_count: 	an integer to show ads count
+
+---------------------------------------------------------------------------------------------------
