@@ -124,10 +124,27 @@ class Admin:
 
         out = {'user_count':'', 'status':'access denied'}
         return jsonify (out)
-        
+
+
+    @staticmethod
+    @cross_origin(supports_credentials=True)
+    @login_required
+    def active_ads_count ():
+
+        if session['role'] == 'admin':
+            surveys = Survey_Model.query_ ('approved').count()
+            apps = Android_Model.query_ ('approved').count()
+
+            out = {'ads_count':surveys + apps, 'status':'OK'}
+            return jsonify (out)
+
+        out = {'ads_count':'', 'status':'access denied'}
+        return jsonify (out)
+
 
 admin.add_url_rule('/api/getPendingApps' , view_func = Admin.get_pending_apps)
 admin.add_url_rule('/api/approveOrRejectApps/<string:submit>/<int:app_id>' , view_func = Admin.approve_or_reject_apps )
 admin.add_url_rule('/api/getPendingSurveys' , view_func = Admin.get_pending_surveys)
 admin.add_url_rule('/api/approveOrRejectSurveys/<string:submit>/<int:survey_id>' , view_func = Admin.approve_or_reject_surveys )
 admin.add_url_rule ('/api/userCount', view_func=Admin.get_users_count)
+admin.add_url_rule ('/api/adsCount', view_func=Admin.active_ads_count)
