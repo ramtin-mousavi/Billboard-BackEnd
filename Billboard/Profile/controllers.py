@@ -130,7 +130,7 @@ class Advertising:
                 new_item = Item_Model (item_context, new_question.id)
                 new_item.add_and_commit()
 
-        out = {'status':'OK'}
+        out = {'cost':new_survey.calculate_cost(), 'status':'OK'}
 
         return jsonify (out)
 
