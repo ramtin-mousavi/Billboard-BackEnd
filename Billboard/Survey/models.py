@@ -124,6 +124,13 @@ class Survey_Model (db.Model):
         db.session.add (self)
         db.session.commit()
 
+    def calculate_cost (self):
+
+        duration = (self.advertise_date - self.expiration_date).days
+        cost = (20 * duration * self.credit) // ((duration % 10))
+
+        return cost
+
 
     @staticmethod
     def query_ (status, user = None, advertiser_id = None):
