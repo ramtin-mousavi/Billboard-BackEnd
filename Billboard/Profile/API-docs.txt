@@ -34,9 +34,11 @@ Advertise A Survey API:
 				]
 
 
-	json response:		{"status": status}
+	json response:		{"cost":cost, "status": status}
 
 		status:			"OK" if no problem
+
+		cost:			an integer to show the cost which advertiser should pay
 
 -------------------------------------------------------------------------------------------------
 Advertise An App API:
