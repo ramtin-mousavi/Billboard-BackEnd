@@ -165,3 +165,17 @@ Get Active Count:
 		user_count: 	an integer to show ads count
 
 ---------------------------------------------------------------------------------------------------
+Get Today Ads Count:
+
+ 	url:/api/todayAdsCount
+
+	method: GET
+
+	json response:	{"today_ads_count": today_ads_count, "status":status}
+
+		status:				"OK" if no problem,
+							"access denied" if user's role is not 'admin'
+
+		today_ads_count:	an integer to show today ads count
+
+-----------------------------------------------------------------------------------------------------
