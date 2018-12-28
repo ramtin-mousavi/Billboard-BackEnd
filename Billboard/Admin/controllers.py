@@ -7,6 +7,7 @@ from Billboard.Survey.models import Survey_Model
 
 from flask_cors import  cross_origin
 
+from datetime import datetime, timedelta
 
 admin = Blueprint('admin', __name__)
 
@@ -142,9 +143,35 @@ class Admin:
         return jsonify (out)
 
 
+    @staticmethod
+    @cross_origin(supports_credentials=True)
+    @login_required
+    def today_ads_count ():
+
+        if session['role'] == 'admin':
+
+            today = datetime.now()
+            today_start = datetime (today.year, today.month, today.day, 00, 00, 00)
+            today_stop = datetime (today.year, today.month, today.day, 23, 59, 59)
+
+            count = (Android_Model.query.filter (Android_Model.advertise_date > today_start,
+                    Android_Model.advertise_date < today_stop).count()
+                    )
+            count += (Survey_Model.query.filter (Survey_Model.advertise_date > today_start,
+                    Survey_Model.advertise_date < today_stop).count()
+                    )
+
+            out = {'today_ads_count':count, 'status': 'OK'}
+            return jsonify (out)
+
+        out = {'today_ads_count':'', 'status':'access denied'}
+        return jsonify (out)
+
+
 admin.add_url_rule('/api/getPendingApps' , view_func = Admin.get_pending_apps)
 admin.add_url_rule('/api/approveOrRejectApps/<string:submit>/<int:app_id>' , view_func = Admin.approve_or_reject_apps )
 admin.add_url_rule('/api/getPendingSurveys' , view_func = Admin.get_pending_surveys)
 admin.add_url_rule('/api/approveOrRejectSurveys/<string:submit>/<int:survey_id>' , view_func = Admin.approve_or_reject_surveys )
 admin.add_url_rule ('/api/userCount', view_func=Admin.get_users_count)
 admin.add_url_rule ('/api/adsCount', view_func=Admin.active_ads_count)
+admin.add_url_rule ('/api/todayAdsCount', view_func=Admin.today_ads_count)
