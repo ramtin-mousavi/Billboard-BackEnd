@@ -1,9 +1,9 @@
 Advertise A Survey API:
 
 	url: /api/getSurvey
-	
+
 	method: POST
-	
+
 	json request: 	   {	"name":"survey3",
 				"description":"survey3 desc",
 				"duration": "30",
@@ -16,13 +16,13 @@ Advertise A Survey API:
 					{"context":"i3 for q1 of s3"}
 					]
 				},
-			
+
 				{"context":"q2 for s3", "items":
 					[{"context":"i1 for q2 of s3"},
 					{"context":"i2 for q2 of s3"}
 					]
 				},
-			
+
 				{"context":"q3 for s3", "items":
 					[{"context":"i1 for q3 of s3"},
 					{"context":"i2 for q3 of s3"},
@@ -30,31 +30,33 @@ Advertise A Survey API:
 					{"context":"i4 for q3 of s3"}
 					]
 				}
-			
+
 				]
 
- 
+
 	json response:		{"status": status}
-	
+
 		status:			"OK" if no problem
-		
+
 -------------------------------------------------------------------------------------------------
 Advertise An App API:
 
 	url: /api/getApp
-	
+
 	method: POST
-	
+
 	json request: 	   {	"name": app_name,
 				"icon": app_icon_link,
 				"credit": credit_for_this_app
 				"dlLink": download_link
 		   	   }
 
-	json response:		{"status": status}
-	
+	json response:		{"cost":cost, "status": status}
+
 		status:			"OK" if no problem
-		
+
+		cost:			an integer to show the cost which advertiser should pay
+
 -------------------------------------------------------------------------------------------------
 Get Advertised Apps API:
 
@@ -63,10 +65,10 @@ Get Advertised Apps API:
 	method: GET
 
 	json response: {"apps":apps_serialize, "status": status}
-	
+
 		status:				"OK" if no problem,
-				
-						
+
+
 		apps_serialize:		[  {			"id": 1,
 								"name": "divar",
 								"advertise_date": "2018-12-06T15:26:10.952494+00:00",
@@ -77,7 +79,7 @@ Get Advertised Apps API:
 								"expiration_date": "2019-01-05T15:26:10.952494+00:00",
 								"icon": "https://parscms.com/my_doc/parscms/article_icon/Divar-logo.png"
 						}
-								
+
 				, ...]
 -----------------------------------------------------------------------------------------------
 Get Advertised Surveys API:
@@ -87,10 +89,10 @@ Get Advertised Surveys API:
 	method: GET
 
 	json response: {"surveys":surveys_serialize, "status": status}
-	
+
 		status:				"OK" if no problem,
-				
-						
+
+
 		surveys_serialize:		[   {	"id": 1,
 							"title": "survey1"
 							"description": "description1",
@@ -105,16 +107,16 @@ Get Advertised Surveys API:
 											"id": 4,
 											"vote_count": 1
 											},
-																
+
 										,...	#other items
 										]
 									},
-										
+
 									,...	#other questions
 									],
-												
+
 							}
-									
+
 							,...	#other surveys
 						]
 
@@ -122,20 +124,20 @@ Get Advertised Surveys API:
 Get Advertised App Stat API:
 
 	url: /api/getAppStat/<int:app_id>
-	
+
 		url parameters:
 			int: app_id			#(required) primary key of app which user wants to show it's stat
-			
+
 	method: GET
-	
+
 	json response: {"app_stat":app_serialize , "status": status}
-	
+
 		status:				"OK" if no problem,
 						"app is waiting to be submitted" if app is waiting for submit by admin,
 						"app has been rejected" if app is rejected by admin,
 						"wrong app_id" if app with this id doesn't exist
 
-		
+
 		app_serialize:		    {	"id": 1,
 						"name": "divar",
 						"advertise_date": "2018-12-06T15:26:10.952494+00:00",
@@ -151,14 +153,14 @@ Get Advertised App Stat API:
 Get Advertised Survey Stat API:
 
 	url: /api/getSurveyStat/<int:survey_id>
-	
+
 		url parameters:
 			int: survey_id		#(required) primary key of app which user wants to show it's stat
-			
+
 	method: GET
-	
+
 	json response: {"survey_stat":app_serialize , "status": status}
-	
+
 		status:				"OK" if no problem,
 						"survey is waiting to be submitted" if survey is waiting for submit by admin,
 						"survey has been rejected" if survey is rejected by admin,
@@ -179,12 +181,11 @@ Get Advertised Survey Stat API:
 										"id": 4,
 										"vote_count": 1
 										},
-															
+
 									,...	#other items
 									]
 								},
-									
+
 								,...	#other questions
-								]			
+								]
 					}
-					
