@@ -126,7 +126,7 @@ class Survey_Model (db.Model):
 
     def calculate_cost (self):
 
-        duration = (self.advertise_date - self.expiration_date).days
+        duration = (self.expiration_date - self.advertise_date).days
         cost = (20 * duration * self.credit) // ((duration % 10))
 
         return cost
