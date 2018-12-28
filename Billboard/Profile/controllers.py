@@ -146,7 +146,7 @@ class Advertising:
         new_app.add_and_commit()
 
 
-        out = {'status':'OK'}
+        out = {'cost':new_app.calculate_cost(), 'status':'OK'}
         return jsonify (out)
 
 
