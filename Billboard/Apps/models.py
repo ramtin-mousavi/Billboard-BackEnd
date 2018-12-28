@@ -68,6 +68,14 @@ class Android_Model (db.Model):
         self.count += 1
         db.session.commit()
 
+    def calculate_cost (self):
+
+        duration = (self.advertise_date - self.expiration_date).days
+        cost = (20 * duration * self.credit) // ((duration % 10)/1.5)
+
+        return cost
+
+
 
     @staticmethod
     def query_ (status, user = None, filt = None, advertiser_id = None):
