@@ -191,3 +191,42 @@ Get Advertised Survey Stat API:
 								,...	#other questions
 								]
 					}
+
+------------------------------------------------------------------------
+Get Submitted Surveys History:
+
+	url: /api/getSubmittedSurveys
+
+	method: GET
+
+	json_response:	{"surveys":survey_history, "status": status}
+
+		status:				"OK" if no problem
+
+		survey_history:		{
+								[
+								{	"id": 1,
+									"title": "survey1"
+									"advertise_date": "2018-12-06T15:26:10.952494+00:00",
+									"expiration_date": "2019-01-05T15:26:10.952494+00:00",
+									"description": "description1",
+									"credit": 100,
+									"questions": [
+											{"context": "qestion1",
+											"id": 1,
+											"items": [
+													{"context": "item1-question1",
+													"id": 4,
+													"vote_count": 1
+													},
+
+												,...	#other items
+												]
+											},
+
+											,...	#other questions
+											]
+									}
+								,... 	#other surveys
+								]
+							}
