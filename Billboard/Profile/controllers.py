@@ -3,6 +3,7 @@ from flask_login import login_required
 
 from Billboard.Apps.models import Android_Model
 from Billboard.Survey.models import Survey_Model, Question_Model, Item_Model
+from Billboard.Authentication.models import User_Model
 
 from flask_cors import  cross_origin
 
@@ -150,7 +151,20 @@ class Advertising:
         return jsonify (out)
 
 
-
-
 profile.add_url_rule('/api/getSurvey' , view_func = Advertising.advertise_survey , methods = ['GET','POST'])
 profile.add_url_rule('/api/getApp' , view_func = Advertising.advertise_app , methods = ['GET','POST'])
+
+
+class User_History :
+
+    @staticmethod
+    @cross_origin (supports_credentials = True)
+    @login_required
+    def get_filled_surveys():
+
+        submitted_surveys = User_Model.query.get (session['user_id']).submitted_surveys
+
+        out = {'surveys':Survey_Model.serialize_many(submitted_surveys), 'status':'OK'}
+        return jsonify (out)
+
+profile.add_url_rule('/api/getSubmittedSurveys' , view_func = User_History.get_filled_surveys)
