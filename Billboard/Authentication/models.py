@@ -8,6 +8,7 @@ from flask_marshmallow import Marshmallow
 
 from Billboard.Apps.models import Android_Model
 from Billboard.Survey.models import Survey_Model
+from Billboard.Ticketing.models import Ticket_Model
 
 
 #many to many relationship between users and surveys
@@ -37,6 +38,7 @@ class User_Model (db.Model, UserMixin):
     role = db.Column (db.String (10) , nullable = False)
     advertised_apps = db.relationship ('Android_Model' , backref = 'user_model' , lazy = True)
     advertised_surveys = db.relationship ('Survey_Model' , backref = 'user_model' , lazy = True)
+    tickets = db.relationship ('Ticket_Model' , backref = 'user_model' , lazy = True)
     submitted_surveys = db.relationship("Survey_Model", secondary = user_survey_table)
     installed_android_apps = db.relationship("Android_Model", secondary = user_android_table)
 
