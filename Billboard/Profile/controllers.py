@@ -167,4 +167,18 @@ class User_History :
         out = {'surveys':Survey_Model.serialize_many(submitted_surveys), 'status':'OK'}
         return jsonify (out)
 
+
+    @staticmethod
+    @cross_origin (supports_credentials = True)
+    @login_required
+    def get_installed_apps():
+
+        installed_apps = User_Model.query.get(session['user_id']).installed_android_apps
+
+        out = {'apps':Android_Model.serialize_many(installed_apps), 'status':'OK'}
+        return jsonify (out)
+
+
+
 profile.add_url_rule('/api/getSubmittedSurveys' , view_func = User_History.get_filled_surveys)
+profile.add_url_rule('/api/getInstalledApps' , view_func = User_History.get_installed_apps)
