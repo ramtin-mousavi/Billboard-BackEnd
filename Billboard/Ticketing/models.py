@@ -32,16 +32,22 @@ class Ticket_Model (db.Model):
         db.session.commit()
 
 
-    def _query (status = False, user_id = None):
+    def query_ (status, user_id = None):
+        assert status in [0,1,2] #false, true, all
 
         if user_id:         #_query(user_id) for users to see all tickets
+            if status == 1:
+                return Ticket_Model.query.filter_by (sender_id = user_id, is_answered = True)
+            elif status == 0:
+                return Ticket_Model.query.filter_by (sender_id = user_id, is_answered = False)
             return Ticket_Model.query.filter_by (sender_id = user_id)
 
-        if status:      #_query (status=True) for admin to see answered tickets
+        if status == 1:
             return Ticket_Model.query.filter_by (is_answered = True)
-            
-        #_query () for admin to see non answered tickets
-        return Ticket_Model.query.filter_by (is_answered = False)
+        elif status == 0:
+            return Ticket_Model.query.filter_by (is_answered = False)
+        return Ticket_Model.query.all()
+
 
 
 
