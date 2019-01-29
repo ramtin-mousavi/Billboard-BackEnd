@@ -11,7 +11,7 @@ class Ticket_Model (db.Model):
     title = db.Column (db.String(40), nullable = False)
     description = db.Column (db.Text , nullable = False)
     sender_id = db.Column(db.Integer, db.ForeignKey('user_model.id'), nullable=False)
-    answer = db.Column (db.Text)
+    answering = db.Column (db.Text)
     is_answered = db.Column (db.Boolean, nullable = False)
 
 
@@ -19,6 +19,7 @@ class Ticket_Model (db.Model):
         self.title = title
         self.description = description
         self.sender_id = sender_id
+        self.answering = None
         self.is_answered = False
 
     def add_and_commit (self):
@@ -27,7 +28,7 @@ class Ticket_Model (db.Model):
 
 
     def answer (self, ans):
-        self.answer = ans
+        self.answering = ans
         self.is_answered = True
         db.session.commit()
 
