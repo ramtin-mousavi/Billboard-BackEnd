@@ -93,9 +93,16 @@ class Ticketing:
         if session ['role'] == 'admin':
             req = request.get_json(force = True)
             ticket = Ticket_Model.query.get (int (req['ticket_id']))
-            ticket.answer(req['answer'])
+            if ticket:
+                if ticket.is_answered :
+                    out = {'status':'ticket has been already answered'}
+                    return jsonify (out)
 
-            out = {'status':'OK'}
+                ticket.answer(req['answer'])
+                out = {'status':'OK'}
+                return jsonify (out)
+
+            out = {'status':'invalid ticket id'}
             return jsonify (out)
 
         out = {'status':'access denied'}
