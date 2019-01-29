@@ -13,7 +13,7 @@ admin = Blueprint('admin', __name__)
 
 
 
-class AdminDecorator:
+class Admin_Required:
     def __init__ (self, params):
         self.params = params
 
@@ -31,7 +31,7 @@ class AdminDecorator:
                 return jsonify (out)
         wrapped_f.__name__ = f.__name__
         return wrapped_f
-        
+
 
 class Admin:
 
