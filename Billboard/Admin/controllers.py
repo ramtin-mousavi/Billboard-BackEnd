@@ -12,6 +12,27 @@ from datetime import datetime, timedelta
 admin = Blueprint('admin', __name__)
 
 
+
+class AdminDecorator:
+    def __init__ (self, params):
+        self.params = params
+
+    def __call__ (self, f):
+
+        def wrapped_f ():
+            if session ['role'] == 'admin':
+                return f()
+            else:
+                out = {}
+                for param in self.params :
+                    out [param] = ''
+                out ['status'] = 'access denied'
+
+                return jsonify (out)
+        wrapped_f.__name__ = f.__name__
+        return wrapped_f
+        
+
 class Admin:
 
     @staticmethod
